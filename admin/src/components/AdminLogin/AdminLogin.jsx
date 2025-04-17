@@ -99,7 +99,7 @@ const AdminLogin = () => {
   return (
     <div className='overlay'>
     <div className='logo'>
-      <img src={assets.TransLogo} alt='transBook logo'/>
+      <img src="/TT-logo.png" alt='transBook logo'/>
     </div>
  <div className='form'>
       <Typography

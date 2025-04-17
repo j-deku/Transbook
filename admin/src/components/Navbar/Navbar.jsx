@@ -42,7 +42,7 @@ const user = ()=>{
     <nav className="navbar">
       <div className="navbar__left">
         <Link to="/dashboard">
-          <img className="navbar__logo" src="/TT-logo.jpg" alt="Logo" />
+          <img className="navbar__logo" src="/TT-logo.png" alt="Logo" />
         </Link>
       </div>
 
