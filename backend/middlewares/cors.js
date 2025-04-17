@@ -1,8 +1,10 @@
 // middlewares/cors.js
 import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"], 
+  origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL, process.env.DRIVER_URL], 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
 };
