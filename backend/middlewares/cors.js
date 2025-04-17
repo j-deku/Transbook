@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL, process.env.DRIVER_URL], 
+  origin: [`${process.env.FRONTEND_URL}`, `${process.env.ADMIN_URL}`, `${process.env.DRIVER_URL}`], 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
 };
