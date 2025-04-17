@@ -1,0 +1,31 @@
+.update-driver{
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 15%;
+    background-color: #2C3E50;
+    color: #bebebe;
+    width: 100%;
+}
+.form-group input{
+    font-family: 'Poppins', Arial;
+}
+.form-group input:focus{
+    outline: none;
+    border:1.5px solid gold;
+}
+.form-group select:focus{
+    outline: none;
+    border:1.5px solid gold;
+}
+.update-driver button{
+    padding: 10px 30px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    &:hover{
+        background-color: #b9d3ec;
+    }
+}

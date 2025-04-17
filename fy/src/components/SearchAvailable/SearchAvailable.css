@@ -1,0 +1,40 @@
+.available-search{
+    background-color: whitesmoke;
+    align-items: center;
+    display: none;
+    padding: 10px;
+    border-radius: 0 0 10px 10px;
+    margin-bottom: 50px;
+}
+
+.available-search h1{
+    font-size: 24px;
+    padding: 20px;
+    font-family: "poppins", Arial;
+}
+.available-search p{
+    color: #333;
+    font-size: 14px;
+    padding: 0px 20px;
+    margin-top: -40px;
+    font-family: "poppins", Arial;
+    text-align: start;
+}
+.available-search button{
+ align-items:center;
+ padding:10px 40px;
+ width: 95%;
+ align-items: center;
+ text-align: center;
+ place-self: center;
+ margin-left: 10px;
+ margin-bottom: 20px;
+ border-radius: 30px;
+ background-color: #124a83;
+}
+
+@media (max-width:750px) {
+    .available-search{
+        display: block;
+    }
+}

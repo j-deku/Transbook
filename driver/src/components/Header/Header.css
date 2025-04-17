@@ -1,0 +1,19 @@
+.bg-header{
+    max-width: 100%;
+    background-image: url('/prem.jpeg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    position: relative;
+    border-radius: 0 0 -5px -5px;
+    -webkit-user-select: none;
+}
+@media (max-width:768px) {
+    .bg-header{
+        height: 70vh;
+    }
+    .current{
+        display: none;
+    }
+}

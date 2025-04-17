@@ -1,0 +1,66 @@
+{
+  "name": "TransBook Driver",
+  "short_name": "TransBook",
+  "description":"Book your rides, get your receipts!",
+  "screenshots": [
+    {
+      "src": "/transBook_logo_circular.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose":"maskable",
+      "form_factor":"narrow"
+    },
+    {
+      "src": "/transBook_logo_circular.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose":"maskable",
+      "form_factor":"wide"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/transBook_logo_circular.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose":"any",
+      "form_factor":"wide"
+    },
+    {
+      "src": "/transBook_logo_circular.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose":"maskable"
+    },
+    {
+      "src": "/transBook_logo_circular.png",
+      "sizes": "353x745",  
+      "type": "image/png",
+      "purpose":"any"
+    }
+  ],
+  "related_applications":[],
+  "start_url": "/",
+  "id":"floral-decor",
+  "background_color": "#FFFFFF",
+  "theme_color": "tomato",
+  "display_override": ["fullscreen", "minimal-ui"],
+  "display": "standalone",
+  "orientation": "portrait",
+  "animation":"pulse",
+  "scope":"/",
+  "protocol_handlers":[
+    {
+      "protocol":"web+transbook",
+      "url":"/handler?/=%s"
+    },
+    {
+      "protocol":"tel",
+      "url":"/handler?/=%s"
+    },
+    {
+      "protocol":"web+transbook",
+      "url":"/handler?/=%s"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+.overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 300;
+    height: 100vh;
+}
+.form-question{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    place-self: center;
+    font-size: 18px;
+}
+.form-question button{
+    padding: 20px 30px;
+    font-size: 16px;
+    background-color: rgb(102, 51, 153, 0.3);
+    color: #f2f2f2;
+    border-radius: 10px;
+    text-align: center;
+    align-items: center;
+    margin:10px;
+}

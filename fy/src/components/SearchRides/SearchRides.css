@@ -1,0 +1,169 @@
+.search-rides {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.ride-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+}
+
+.ride-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.ride-date {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2C3E50;
+  font-weight: bold;
+}
+.ride-date p{
+  font-size: 20px;
+  color: #555;
+  font-family: 'poppins', sans-serif;
+}
+.ride-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  color: #555;
+  flex-wrap: wrap;
+}
+
+.ride-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.driver-info {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.driver-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.ride-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-weight: bold;
+  font-size: 18px;
+  color: #555;
+}
+
+.time-label {
+  min-width: 50px;
+  text-align: center;
+}
+
+.timeline-icon {
+  font-size: 20px;
+  color: #888;
+  margin: 0 5px;
+}
+
+.timeline-bar {
+  flex-grow: 1;
+  height: 4px;
+  background-color: #ccc;
+  margin: 0 5px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.duration-label {
+  font-size: 16px;
+  color: #0e2a55;
+  background-color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  /* Optionally, add a slight shadow for better visibility */
+}
+
+.select-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #0c2e52;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.select-button:hover {
+  background-color: #0056b3;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #0c2e52;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 1rem;
+  color: #333;
+}
+
+.continue-btn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #0c2e52;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.continue-btn:hover {
+  background-color: #0056b3;
+}

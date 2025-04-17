@@ -1,0 +1,8 @@
+.notification-center{
+    display: block;
+}
+@media (max-width:750px) {
+    .notification-center{
+        display: none;
+    }
+}

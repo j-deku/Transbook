@@ -1,0 +1,44 @@
+.overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    background-color:rgb(250, 250, 233);
+    width:100%;
+    z-index:100;
+  }
+  
+.form-submitted{
+    margin-top: 10%;
+    display: list-item;
+    align-items: center;
+    place-self: center;
+    text-align: center;
+    width: 90%;
+}
+.form-submitted h1{
+    color: #333;
+}
+.form-submitted p{
+    font-size: 24px;
+    color: #777;
+}
+.form-submitted p b{
+    color: tomato;
+}
+
+@media (max-width:750px) {
+    .overlay{
+        position:fixed;
+        top:0;
+        left:0;
+        background-color:rgb(250, 250, 233);
+        width:100%;
+        z-index:100;
+    }
+    .form-submitted{
+        margin-top: 30%;
+        width: 100%;
+        padding: 0 30px;
+        font-size: 18px;
+    }
+}

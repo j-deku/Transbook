@@ -1,0 +1,88 @@
+.design-display{
+    margin: 100px;
+}
+.car-show{
+    display: flex;
+    justify-content: space-between;
+    margin: 100px;
+    gap: 20px;
+}
+
+.car-show img{
+    width: 50%;
+    height: 50%;
+    border-radius: 20px;
+    transition: all 5s;
+}
+.car-show .arrowMiddle::before{
+    content: "\2193";
+    color: #444;
+    font-size: 42px;
+    transition: all 0.3s;
+    margin-top: 100px;
+    animation: pointing 1.5s ease infinite;
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+@keyframes pointing {
+    100% {
+        transform: translateX(0);
+    }
+    50%{
+        transform: translateY(10px);
+    }
+    0% {
+        transform: translateX(0);
+    }
+}
+
+.design-display h1{
+    font-size: max(2vw,24px);
+    font-weight: 600;
+}
+.design-display h2{
+    font-size: max(1.5vw,16px);
+    font-weight: 600;
+    color: #555;
+}
+.design-display-list{
+    display: grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    margin-top: 30px;
+    gap: 30px;
+    row-gap: 50px;
+}
+.card1{
+    background-color: whitesmoke;
+    box-shadow: 0 0 5px #ccc;
+    padding: 40px 30px;
+    gap: 20px;
+    border-radius: 20px;
+}
+p{
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    justify-content:center;
+    font-family: "Poppins", roboto;
+}
+
+@media (max-width:768px) {
+    .design-display{
+        display: none;
+    }
+    .car-show{
+        flex-direction: column;
+        margin: 20px 0px;
+        gap: 10px;
+        align-items: center;
+        padding-top: 100px;
+        padding-bottom: 100px;
+    }
+    .car-show img{
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+}

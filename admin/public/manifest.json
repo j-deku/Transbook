@@ -1,0 +1,216 @@
+{
+    "name": "Balloon & Floral Decoration",
+    "short_name": "Floral Decor",
+    "description":"Discover beautifully crafted balloon and floral arrangements for every occasion. We bring your celebrations to life with style and creativity.",
+    "screenshots": [
+      {
+        "src": "pad2.png",
+        "sizes": "1024x1024",
+        "type": "image/png",
+        "purpose":"maskable",
+        "form_factor":"narrow"
+      },
+      {
+        "src": "screen_360.png",
+        "sizes": "360x360",
+        "type": "image/png",
+        "purpose":"maskable",
+        "form_factor":"wide"
+      }
+    ],
+    "icons": [
+      {
+        "src": "flower_144.png",
+        "sizes": "144x144",
+        "type": "image/png",
+        "purpose":"any",
+        "form_factor":"wide"
+      },
+      {
+        "src": "flower_32.png",
+        "sizes": "32x32",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "flower_logo2.png",
+        "sizes": "256x256",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "to_do_icon2.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "to_do_icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose":"maskable"    
+      },
+      {
+        "src": "pad.png",
+        "sizes": "1024x1366",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "pad2.png",
+        "sizes": "1024x1024",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "to_do_icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "flower_logo3.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "to_do_icon2.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "6,7&8pus.png",
+        "sizes": "414x736",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "myAnd.png",
+        "sizes": "720x1440",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "iX.png",
+        "sizes": "375x812",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "io.png",
+        "sizes": "375x667",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "iXR.png",
+        "sizes": "414x896",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "i12.png",
+        "sizes": "390x844",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "i14.png",
+        "sizes": "430x932",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "galN3.png",
+        "sizes": "360x640", 
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "galS8.png",
+        "sizes": "360x740",
+        "type": "image/png",
+        "purpose":"any"
+      },
+      {
+        "src": "gal9.png",
+        "sizes": "320x658",
+        "type": "image/png",
+        "purpose":"any"
+      },
+      {
+        "src": "galTabS4.png",
+        "sizes": "712x1138",
+        "type": "image/png",
+        "purpose":"any"
+      },
+      {
+        "src": "HDX.png",
+        "sizes": "800x1280",
+        "type": "image/png",
+        "purpose":"any"
+      },
+      {
+        "src": "motGPo.png",
+        "sizes": "412x823",
+        "type": "image/png",
+        "purpose":"any"
+      },
+      {
+        "src": "nex4.png",
+        "sizes": "384x640",
+        "type": "image/png",
+        "purpose":"any"
+      },
+      {
+        "src": "logi.png",
+        "sizes": "1440x720",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "big_720.png",
+        "sizes": "720x720",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "biggerDev.png",
+        "sizes": "1440x1440",
+        "type": "image/png",
+        "purpose":"maskable"
+      },
+      {
+        "src": "PXL.png",
+        "sizes": "353x745",  
+        "type": "image/png",
+        "purpose":"any"
+      }
+    ],
+    "related_applications":[],
+    "start_url": "/",
+    "id":"floral-decor",
+    "background_color": "#FFFFFF",
+    "theme_color": "tomato",
+    "display_override": ["fullscreen", "minimal-ui"],
+    "display": "standalone",
+    "orientation": "portrait",
+    "animation":"pulse",
+    "scope":"/",
+    "protocol_handlers":[
+      {
+        "protocol":"web+balloondecor",
+        "url":"/handler?/=%s"
+      },
+      {
+        "protocol":"tel",
+        "url":"/handler?/=%s"
+      },
+      {
+        "protocol":"web+balloondecor",
+        "url":"/handler?/=%s"
+      }
+    ]
+  }

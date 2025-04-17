@@ -1,0 +1,12 @@
+.searchInput{
+    display: grid;
+    align-items: center;
+    place-content: center;
+    margin: 200px 0;
+}
+@media (max-width:768px) {
+    .searchInput{
+        margin-bottom: 100%;
+    }
+
+}

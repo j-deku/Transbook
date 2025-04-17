@@ -1,0 +1,7 @@
+.google-btn{
+    transition: 0.3s;
+    &:hover{
+        font-weight: bold;
+        color: white;
+    }
+}

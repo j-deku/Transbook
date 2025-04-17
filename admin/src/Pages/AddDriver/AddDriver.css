@@ -1,0 +1,52 @@
+.add-driver {
+    width: 40%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .add-driver h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .driver-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-group input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .submit-btn {
+    padding: 10px;
+    border: none;
+    background-color: #183758;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: rgb(102, 51, 153, 0.6);
+  }
+  
+  @media (max-width:768px) {
+    .add-driver{
+        width: 60%;        
+    }
+  }

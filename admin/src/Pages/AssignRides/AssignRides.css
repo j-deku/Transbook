@@ -1,0 +1,52 @@
+.assign-ride-container {
+    padding: 20px;
+    width: 80%;
+    overflow-x: auto;
+  }
+  
+  .assign-ride-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .assign-ride-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .assign-ride-table th,
+  .assign-ride-table td {
+    border: 1px solid #ddd;
+    padding: 15px 30px;
+    text-align: center;
+  }
+  
+  .assign-ride-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .assign-ride-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .assign-ride-table tr:hover {
+    background-color: #eaeaea;
+  }
+  
+  .assign-ride-table button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .assign-ride-table button:hover {
+    background-color: #0056b3;
+  }
+  
+  .assign-ride-table select {
+    padding: 4px;
+  }
+  

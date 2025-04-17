@@ -1,0 +1,113 @@
+.book-sort {
+  position: sticky;
+  top: 100px; /* Ensures BookSort stays below the navbar */
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Desktop-specific view */
+.desktop-sort {
+  display: block;
+}
+
+.desktop-sort h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #2C3E50;
+}
+
+.desktop-sort select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+.other-sort {
+  margin-top: 10px;
+  font-weight: 400;
+  color: #555;
+}
+
+#clear {
+  background-color: transparent;
+  color: #2C3E50;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+/* Hamburger icon styling */
+.iconHam {
+  display: none;
+}
+
+/* Filter menu overlay for mobile */
+.filter-menu {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.99);
+  z-index: 105;
+  padding: 20px;
+  overflow-y: auto;
+  border-radius: 0;
+  animation: slideDown 0.3s ease-out;
+}
+
+.filter-menu.show {
+  display: block;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.hamburger{
+  display: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .hamburger{
+    display: block;
+  }
+  .desktop-sort {
+    display: none;
+  }
+  .iconHam {
+    display: block;
+    position: fixed;
+    top: 90px;  /* Adjust based on your navbar height */
+    right: 20px;
+    z-index: 110;
+    color: #152d46;
+    color: rgb(75, 92, 128);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .iconHam .dot{
+    background-color: tomato;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -5px;
+    left: -5px;
+    color: tomato;
+  }
+}

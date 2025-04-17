@@ -1,0 +1,45 @@
+.list-drivers {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+  
+  .list-drivers h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .drivers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .drivers-table th,
+  .drivers-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .drivers-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .drivers-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .drivers-table tr:hover {
+    background-color: #eaeaea;
+  }
+  
+  .driver-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  

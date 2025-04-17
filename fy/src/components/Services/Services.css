@@ -1,0 +1,140 @@
+.service {
+    margin: 100px 30px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .service h1{
+    color: #333;
+  }
+  
+  .cards {
+    display: flex;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+  }
+  
+  .cards::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .cards .card {
+    padding: 0 0 10px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px #ddd;
+    transition: all 0.3s;
+  }
+  
+  .cards .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .card .image-overlay {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .card .image-overlay img {
+    max-width: max(300px, 20vw);
+    align-items: center;
+    border-radius: 10px;
+    transition: transform 0.5s, filter 0.5s;
+    cursor: pointer;
+  }
+  
+  .card .image-overlay:hover img {
+    transform: scale(1.1);
+    filter: brightness(70%);
+  }
+  
+  .card p:nth-of-type(1) {
+    font-size: 20px;
+    line-height: 1.5;
+    margin: 10px;
+    color: #295d8d;
+    text-align: center;
+    justify-content: center;
+    font-family: 'Poppins', roboto;
+  }
+  
+  .card p:nth-of-type(2) {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .card p:nth-of-type(3) {
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    padding: 10px 0 0 10px;
+  }
+  
+  .card button {
+    border-radius: 50%;
+    padding: 20px;
+    float: right;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  .scroll-buttons {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+  
+  .scroll-button {
+    background-color: rgba(27, 68, 145, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  .scroll-button:hover {
+    transform: scale(1.1);
+  }
+  
+  .scroll-button.left {
+    position: absolute;
+    left: -30px;
+  }
+  
+  .scroll-button.right {
+    position: absolute;
+    right: -30px;
+  }
+  
+  @media (max-width: 768px) {
+    .cards {
+      width: 100%;
+    }
+  
+    .scroll-button.left {
+      left: -10px;
+    }
+  
+    .scroll-button.right {
+      right: -10px;
+    }
+  }
+  
