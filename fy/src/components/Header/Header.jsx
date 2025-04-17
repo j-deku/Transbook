@@ -10,7 +10,7 @@ const Header = () => {
   const slides = [
     {
       url: "/bus2.jpg",
-      title: "Welcome to Transport booking platform",
+      title: "Elevate Your Travel in Cameroon",
       description: "Experience comfort and reliability for all your journeys.",
       gradient: "radial-gradient(circle at bottom left, rgba(12, 62, 75, 0.92) 40%, rgba(11, 59, 71, 0.92) 50%, transparent 80%)",
     },
