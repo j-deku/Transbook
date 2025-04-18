@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { jwtDecode } from 'jwt-decode';
 
-const socket = io("https://transbook-backend.onrender.com");
+const socket = io(import.meta.env.VITE_API_BASE_URL);
 
 const AdminSocketProvider = ({ children }) => {
   useEffect(() => {

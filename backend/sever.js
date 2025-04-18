@@ -24,6 +24,7 @@ import { ensureSuperAdminExists } from "./controllers/AdminController.js";
 import notificationRouter from "./routes/NotificationRoute.js";
 import { connectDB } from "./config/Db.js";
 import fareRouter from "./routes/FareRoute.js";
+import copyDatabase from "./utils/copyDatabase.js";
 
 // App configuration
 const app = express();
@@ -86,6 +87,8 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+copyDatabase().then(console.log).catch(console.error);
 
 // DB Connection and Super Admin setup
 connectDB().then(() => {

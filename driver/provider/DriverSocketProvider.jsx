@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 
-const socket = io("http://localhost:5000");
+const socket = io(import.meta.env.VITE_API_BASE_URL);
 
 const DriverSocketProvider = ({ children }) => {
   useEffect(() => {

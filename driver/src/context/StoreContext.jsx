@@ -5,7 +5,7 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
-  const url = "http://localhost:5000";
+  const url = import.meta.env.VITE_API_BASE_URL;
   const [token, setToken] = useState("");
   const [cookie, setCookie] = useState("");
   const [searchTerm, setSearchTerm] = useState(""); // this is for normal searching at the navbar so don't use it

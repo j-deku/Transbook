@@ -29,6 +29,7 @@ import verifyAdmin  from "../middlewares/adminAuth.js";
 const adminRouter = express.Router();
 
 // Public endpoints for login and password resets
+
 adminRouter.post("/login", AdminLogin);
 adminRouter.post("/forgot-password", forgotPassword);
 adminRouter.post("/reset-password/:token", resetPassword);

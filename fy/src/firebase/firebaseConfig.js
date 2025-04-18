@@ -17,7 +17,7 @@ const messaging = getMessaging(app);
 
 // Request permission and get FCM token
 export const requestForToken = async () => {
-  const url = "https://transbook-backend.onrender.com";
+  const url = import.meta.env.VITE_API_BASE_URL;
   try {
     const registration = await navigator.serviceWorker.ready;
     const currentToken = await getToken(messaging, { vapidKey: "BFBBtIQMH2_UFmDk7h0bnWaA55pE_eTKHXUy8b8G_hRSZB38C91Ga4LF9-pejxZli_afabqIQ59OQDHjRJIrNTQ", serviceWorkerRegistration: registration, });

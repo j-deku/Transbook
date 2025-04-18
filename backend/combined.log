@@ -985,3 +985,4 @@
 {"level":"info","message":"Request: PUT /api/admin/drivers/approve/67b3e7e0a8d7b8d75ad33d90"}
 {"level":"info","message":"Request: PUT /api/admin/drivers/approve/67b3e7e0a8d7b8d75ad33d90"}
 {"level":"info","message":"Request: GET /api/drivers/upcoming-rides"}
+{"level":"info","message":"Request: GET /favicon.ico"}

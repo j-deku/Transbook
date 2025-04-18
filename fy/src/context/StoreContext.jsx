@@ -10,7 +10,7 @@ const StoreContextProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
   
-  const url = "https://transbook-backend.onrender.com";
+  const url = import.meta.env.VITE_API_BASE_URL;
   const [token, setToken] = useState("");
   const [cookie, setCookie] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
