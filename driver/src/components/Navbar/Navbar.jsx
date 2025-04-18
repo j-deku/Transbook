@@ -53,7 +53,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar__left">
         <Link to="/dashboard">
-          <img className="navbar__logo" src={assets.TransLogo} alt="Logo" />
+          <img className="navbar__logo" src="/TT-logo.png" alt="Logo" />
         </Link>
       </div>
 

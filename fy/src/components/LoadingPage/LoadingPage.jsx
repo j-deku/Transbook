@@ -1,11 +1,10 @@
 import React from 'react'
 import './LoadingPage.css'
-import {assets} from "../../assets/assets"
 import { Link } from 'react-router-dom'
 const LoadingPage = () => {
   return (
     <div className='loadingPage'>
-      <img src={assets.TransLogo2} alt="" />
+      <img src="/TT-logo.png" alt="Logo" />
       <div className='loading-text'>
         <p>l o a d i n g . . .</p>
       </div>

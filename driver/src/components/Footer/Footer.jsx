@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Footer.css";
-import { assets } from "../../assets/assets";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -9,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="driver-footer">
     <div className="logo" onClick={()=>navigate("/")}>
-        <img src={assets.TransLogo2} alt="Logo" />
+        <img src="/TT-logo.png" alt="Logo" />
     </div>
       <nav className="footer-nav">
         <Link to="/history">Ride History</Link>
