@@ -1,5 +1,5 @@
 import express from "express";
-import corsMiddleware from "./middlewares/cors.js";
+import corsMiddleware, { corsOptions } from "./middlewares/cors.js";
 import userRouter from "./routes/UserRoute.js";
 import limiter from "./middlewares/rateLimiter.js";
 import "dotenv/config.js";
@@ -33,7 +33,13 @@ const port = process.env.PORT || 5000;
 // Create HTTP server and attach Socket.IO
 const server = http.createServer(app);
 export const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: {
+    origin: corsOptions.origin,
+    methods: corsOptions.methods,
+    credentials: true,
+    allowedHeaders: corsOptions.allowedHeaders
+  },
+  path: '/socket.io'      // default, but explicit helps avoid subfolder issues :contentReference[oaicite:9]{index=9}
 });
 
 // Socket.IO integration

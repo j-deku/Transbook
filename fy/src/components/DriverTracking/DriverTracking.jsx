@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import RealTimeMap from '../RealTimeMap/RealTimeMap';
 
-const socket = io('https://transbook-backend.onrender.com');
+const socket = io(import.meta.env.VITE_API_BASE_URL, {
+    path: '/socket.io',
+    withCredentials: true,          // sends cookies/auth headers :contentReference[oaicite:11]{index=11}
+    transports: ['websocket','polling']
+  }
+);
 
 const DriverTracking = () => {
   const [driverLocation, setDriverLocation] = useState(null);

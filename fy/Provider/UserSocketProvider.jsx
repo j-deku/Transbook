@@ -4,7 +4,11 @@ import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { jwtDecode } from 'jwt-decode';
 
-const socket = io(import.meta.env.VITE_API_BASE_URL);
+const socket = io(import.meta.env.VITE_API_BASE_URL, {
+  path: '/socket.io',
+  withCredentials: true,          // sends cookies/auth headers :contentReference[oaicite:11]{index=11}
+  transports: ['websocket','polling']
+});
 
 const UserSocketProvider = ({ children }) => {
 
