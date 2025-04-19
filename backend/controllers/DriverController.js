@@ -4,6 +4,10 @@ import BookingModel from "../models/BookingModel.js";
 import userModel from "../models/UserModel.js";
 import validator from "validator";
 import bcrypt from 'bcryptjs' // Ensure this is imported
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
+import crypto from "crypto";
 import jwt from 'jsonwebtoken'
 import { io } from "../sever.js"; // Import socket.io instance
 import {sendPushNotification} from "../utils/sendPushNotification.js"
