@@ -56,9 +56,9 @@ const App = () => {
       <ToastContainer position="top-left" />
       <Navbar/>
       <Routes>
-        <Route path="/" element={<RegisForm/>}/>
+        <Route path="/" element={<LoginForm/>}/>
         <Route path="/form-submitted" element={<PrivateSuccessRoute><FormSubmitted/></PrivateSuccessRoute>}/>
-        <Route path="/login" element={<LoginForm/>} />
+        <Route path="/register" element={<RegisForm/>} />
         <Route path="/create-ride" element={<CreateRide/>}/>
         <Route path='/dashboard' element={<PrivateRoute><Home/></PrivateRoute>}/>
         <Route path='/history' element={<PrivateRoute><History/></PrivateRoute>}/>

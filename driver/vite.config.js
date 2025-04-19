@@ -11,19 +11,19 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Set to 5MB
       },
       manifest:{
-        "name": "Transport Book",
-        "short_name": "TransBook",
+        "name": "TOLI-TOLI",
+        "short_name": "TOLI-TOLI",
         "description":"Book Your Rides, Get Your Receipts.",
         "screenshots": [
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose":"maskable",
             "form_factor":"narrow"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "360x360",
             "type": "image/png",
             "purpose":"maskable",
@@ -32,86 +32,86 @@ export default defineConfig({
         ],
         "icons": [
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "144x144",
             "type": "image/png",
             "purpose":"any",
             "form_factor":"wide"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "32x32",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "256x256",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "180x180",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose":"maskable"    
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "1024x1366",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "414x736",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "720x1440",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/transBook_logo_circular.png",
+            "src": "/TT-logo.png",
             "sizes": "353x745",  
             "type": "image/png",
             "purpose":"any"
@@ -119,7 +119,7 @@ export default defineConfig({
         ],
         "related_applications":[],
         "start_url": "/",
-        "id":"transbook",
+        "id":"TOLI-TOLI",
         "background_color": "#FFFFFF",
         "theme_color": "#2C3E50",
         "display_override": ["fullscreen", "minimal-ui"],
@@ -129,7 +129,7 @@ export default defineConfig({
         "scope":"/",
         "protocol_handlers":[
           {
-            "protocol":"web+transbook",
+            "protocol":"web+tolitoli",
             "url":"/handler?/=%s"
           },
           {
@@ -137,7 +137,7 @@ export default defineConfig({
             "url":"/handler?/=%s"
           },
           {
-            "protocol":"web+transbook",
+            "protocol":"web+tolitoli",
             "url":"/handler?/=%s"
           }
         ]
@@ -147,7 +147,7 @@ export default defineConfig({
   base:'/',
   server: {
     proxy: {
-      '/api': 'http://localhost:5000',
+      '/api': import.meta.url,
     },
   },
   build: {

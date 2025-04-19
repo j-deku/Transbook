@@ -31,7 +31,7 @@ const Navbar = () => {
     localStorage.removeItem("driverImageUrl");
     localStorage.removeItem("driverNotifications");
     sessionStorage.removeItem("token");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   // Close the dropdown if a click happens outside the profile section

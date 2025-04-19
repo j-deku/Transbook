@@ -20,7 +20,7 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem("driverImageUrl");
         localStorage.removeItem("driverNotifications");
         toast.error("Session expired. Please log in again.");
-        window.location.href = "/login"; // Redirect to login page
+        window.location.href = "/"; // Redirect to login page
       }
     }
     return Promise.reject(error);
