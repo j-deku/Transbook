@@ -16,16 +16,16 @@ const EmailOTP = (name, otp) => `
                             <a href=${
                               process.env.FRONTEND_URL
                             } style="text-decoration: none;">
-                            <img src=${process.env.LOGO} alt="BlooFI" width="150px" >
+                            <img src=${process.env.LOGO} alt="TOLI-TOLI" width="100px" >
                             </a>
                         </td>
                     </tr>
                     <tr>
                         <td align="center" style="padding: 30px 40px; text-align: center; font-size: 16px; color: #333;">
                             <h1 style="margin: 0; color: #444;">Hi ${name}!</h1>
-                            <h2 style="margin: 20px 0; color: #0171c2;">Welcome to TransBook</h2>
+                            <h2 style="margin: 20px 0; color: #0171c2;">Welcome to TOLI-TOLI</h2>
                             <p style="line-height: 1.6; color: #555;">
-                                TransBook is an online platform for travelling to your favorite destinations with ease.<br>
+                                TOLI-TOLI is an online platform for travelling to your favorite destinations with ease.<br>
                                 Our mission is to make the world of travel a more beautiful and enjoyable place for everyone.
                             </p>
                             <h2 style="color: #444; margin-top: 30px;">Your One-Time Password (OTP)</h2>
@@ -39,12 +39,12 @@ const EmailOTP = (name, otp) => `
                     <tr>
                         <td align="center" style="background-color: #171717; padding: 20px; color: #ccc; font-size: 12px; text-align: center;">
                             <nav style="margin-bottom: 10px;">
-                                <a href="https://transbook-fy.onrender.com/about-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">About</a> |
-                                <a href="https://transbook-fy.onrender.com/contact-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">Contact</a> |
-                                <a href="https://transbook-fy.onrender.com/privacy-policy" style="color: #ccc; text-decoration: none; margin: 0 5px;">Privacy Policy</a> |
-                                <a href="https://transbook-fy.onrender.com/terms-of-service" style="color: #ccc; text-decoration: none; margin: 0 5px;">Terms of Service</a>
+                                <a href="https://toli-toli.onrender.com/about-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">About</a> |
+                                <a href="https://toli-toli.onrender.com/contact-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">Contact</a> |
+                                <a href="https://toli-toli.onrender.com/privacy-policy" style="color: #ccc; text-decoration: none; margin: 0 5px;">Privacy Policy</a> |
+                                <a href="https://toli-toli.onrender.com/terms-of-service" style="color: #ccc; text-decoration: none; margin: 0 5px;">Terms of Service</a>
                             </nav>
-                            <p>&copy; TransBook ${new Date().getFullYear()}. All Rights Reserved.</p>
+                            <p>&copy; TOLI-TOLI ${new Date().getFullYear()}. All Rights Reserved.</p>
                         </td>
                     </tr>
                 </table>
@@ -61,7 +61,7 @@ const EmailWelcome = (name) => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to TransBook</title>
+    <title>Welcome to TOLI-TOLI</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background-color: #f5f5f5; color: #333;">
     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f5f5f5; margin: 0; padding: 0;">
@@ -73,16 +73,16 @@ const EmailWelcome = (name) => `
                             <a href=${
                               process.env.FRONTEND_URL
                             } style="text-decoration: none;">
-                            <img src=${process.env.GIF} alt="TransBook">
+                            <img src=${process.env.GIF} alt="TOLI-TOLI">
                             </a>
                         </td>
                     </tr>
                     <tr>
                         <td align="center" style="padding: 30px 40px; text-align: center; font-size: 16px; color: #333;">
                             <h1 style="margin: 0; color: #444;">Hi ${name},</h1>
-                            <h2 style="margin: 20px 0; color: #0171c2;">Welcome Back to TransBook!</h2>
+                            <h2 style="margin: 20px 0; color: #0171c2;">Welcome Back to TOLI-TOLI!</h2>
                             <p style="line-height: 1.6; color: #555;">
-                                We're thrilled to have you back. At TransBook, we're committed to making your experience with Transport Booking seamless and enjoyable.
+                                We're thrilled to have you back. At TOLI-TOLI, we're committed to making your experience with TOLI-TOLI Booking seamless and enjoyable.
                             </p>
                             <p style="line-height: 1.6; color: #555;">
                                 If you have any questions or need assistance, our team is here to help. Explore your dashboard and let us make your travelling journey extraordinary.
@@ -99,13 +99,13 @@ const EmailWelcome = (name) => `
                             <nav style="margin-bottom: 10px;">
                             <img src=${
                               process.env.LOGO
-                            } width="70px" alt="BlooFI" style="float:left;">
-                                <a href="http://localhost:5173/about-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">About</a> |
-                                <a href="http://localhost:5173/contact-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">Contact</a> |
-                                <a href="http://localhost:5173/privacy-policy" style="color: #ccc; text-decoration: none; margin: 0 5px;">Privacy Policy</a> |
-                                <a href="http://localhost:5173/terms-of-service" style="color: #ccc; text-decoration: none; margin: 0 5px;">Terms of Service</a>
+                            } width="60px" alt="BlooFI" style="float:left;">
+                                <a href="http://toli-toli.onrender/about-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">About</a> |
+                                <a href="http://toli-toli.onrender/contact-us" style="color: #ccc; text-decoration: none; margin: 0 5px;">Contact</a> |
+                                <a href="http://toli-toli.onrender/privacy-policy" style="color: #ccc; text-decoration: none; margin: 0 5px;">Privacy Policy</a> |
+                                <a href="http://toli-toli.onrender/terms-of-service" style="color: #ccc; text-decoration: none; margin: 0 5px;">Terms of Service</a>
                             </nav>
-                            <p>&copy; TransBook ${new Date().getFullYear()}. All Rights Reserved.</p>
+                            <p>&copy; TOLI-TOLI ${new Date().getFullYear()}. All Rights Reserved.</p>
                         </td>
                     </tr>
                 </table>
@@ -154,7 +154,7 @@ const ResendEmail = (name, otp, verificationUrl) => `
 <tr>
 <td align="center" style="padding: 20px; font-size: 12px; color: #999999; background-color: #f9f9f9;">
 <p style="margin: 0;">Need help? <a href="#" style="color: #0c617e; text-decoration: none;">Contact Support</a></p>
-<p style="margin: 5px 0;">Inc. © 2024 TransBook. All rights reserved.</p>
+<p style="margin: 5px 0;">Inc. © ${Date.getFullYear()} TOLI-TOLI All rights reserved.</p>
 </td>
 </tr>
 </table>
@@ -260,7 +260,7 @@ const VerifiedEmail = (name) => `
   <div class="email-container">
     <!-- Header Section -->
     <div class="header">
-      <img src=${process.env.LOGO} alt="TransBook">
+      <img src=${process.env.LOGO} alt="TransBook" width="100" height="100">
       <h2>Welcome to TransBook!</h2>
     </div>
 
@@ -289,17 +289,17 @@ const VerifiedEmail = (name) => `
       </ul>
 
       <!-- Call to Action Button -->
-      <a href="https://transbook-fy.onrender.com/" class="button">Go to Dashboard</a>
+      <a href="https://toli-toli.onrender.com/" class="button">Go to Dashboard</a>
     </div>
 
     <!-- Footer Section -->
     <div class="footer">
       <p>
-        If you have any questions, feel free to <a href="https://transBook-fy.onrender.com/support">contact our support team</a>.
+        If you have any questions, feel free to <a href="https://toli-toli.onrender.com/support">contact our support team</a>.
       </p>
       <p>
         Stay awesome,<br>
-        The TransBook Team
+        The TOLI-TOLI Team
       </p>
     </div>
   </div>
