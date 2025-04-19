@@ -117,7 +117,7 @@ const RegisForm = () => {
   return (
     <div className='overlay'>
             <div className='logo'>
-              <img src={assets.TransLogo} alt='transBook logo'/>
+              <img src="/TT-logo.png" alt='transBook logo'/>
             </div>
       <div className="add-driver">
         <h2>DRIVER REGISTRATION</h2>
@@ -267,7 +267,7 @@ const RegisForm = () => {
           <button type="submit" className="submit-btn">Register</button>
         </form>
         <br /><br />
-        <p>Already have an account? <a href='/login'>Login here</a></p>
+        <p>Already have an account? <a href='/'>Login here</a></p>
       </div>
     </div>
   );

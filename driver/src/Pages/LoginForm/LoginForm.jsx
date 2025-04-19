@@ -109,7 +109,7 @@ const LoginForm = () => {
   return (
     <div className="overlay">
         <div className='logo'>
-          <img src={assets.TransLogo} alt='transBook logo'/>
+          <img src="/TT-logo.png" alt='transBook logo'/>
         </div>
       <div className="form">
         <Typography variant="h5" sx={{ mb: 3, textAlign: "center", color: "gray" }}>
@@ -185,7 +185,7 @@ const LoginForm = () => {
             </form>
           )}
         </Formik>
-        <p>Not yet registered? <a href="/">Register Account</a></p>
+        <p>Not yet registered? <a href="/register">Register Account</a></p>
       </div>
     </div>
   );

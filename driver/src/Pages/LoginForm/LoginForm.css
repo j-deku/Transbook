@@ -20,4 +20,8 @@
     .form{
         margin: 100px 15%;
     }
+    .overlay .logo img{
+        width: 60px;
+        margin: 20px 20px;
+    }
 }
