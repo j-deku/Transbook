@@ -109,7 +109,7 @@ const LoginForm = () => {
   return (
     <div className="overlay">
         <div className='logo'>
-          <img src="/TT-logo.png" alt='transBook logo'/>
+          <img src="/TT-logo.png" alt='toli-toli logo'/>
         </div>
       <div className="form">
         <Typography variant="h5" sx={{ mb: 3, textAlign: "center", color: "gray" }}>
