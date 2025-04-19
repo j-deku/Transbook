@@ -6,9 +6,9 @@ dotenv.config();
 
 export const corsOptions = {
   origin: [
-    process.env.FRONTEND_URL,
-    process.env.ADMIN_URL,
-    process.env.DRIVER_URL,
+    process.env.FRONTEND_URL || 'https://toli-toli.onrender.com',
+    process.env.ADMIN_URL || 'https://toli-toli-admin.onrender.com',
+    process.env.DRIVER_URL || 'https://toli-toli-driver.onrender.com',
   ].filter(Boolean),           // drop any undefined entries
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
