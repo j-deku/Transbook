@@ -28,7 +28,7 @@ import copyDatabase from "./utils/copyDatabase.js";
 
 // App configuration
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 80;
 
 // Create HTTP server and attach Socket.IO
 const server = http.createServer(app);
@@ -36,11 +36,17 @@ export const io = new Server(server, {
   cors: {
     origin: corsOptions.origin,
     methods: corsOptions.methods,
-    credentials: true,
+    credentials: corsOptions.credentials,
     allowedHeaders: corsOptions.allowedHeaders
   },
-  path: '/socket.io'      // default, but explicit helps avoid subfolder issues :contentReference[oaicite:9]{index=9}
+  transports: ["websocket","polling"],
+  path: "/socket.io",
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  allowEIO3: true
 });
+
+app.set("trust proxy", 1);
 
 // Socket.IO integration
 io.on("connection", (socket) => {
