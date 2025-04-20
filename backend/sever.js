@@ -30,6 +30,19 @@ import copyDatabase from "./utils/copyDatabase.js";
 const app = express();
 const port = process.env.PORT || 80;
 
+app.use(express.static(path.resolve(__dirname, 'dist'), {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.js') || filePath.endsWith('.mjs')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
+
+// SPA fallback to index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist/index.html'));
+});
+
 // Create HTTP server and attach Socket.IO
 const server = http.createServer(app);
 export const io = new Server(server, {
