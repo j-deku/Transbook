@@ -1,6 +1,5 @@
-// sever.js
 import express from "express";
-import corsMiddleware, { corsOptions } from "./middlewares/cors.js";
+import corsMiddleware from "./middlewares/cors.js";
 import userRouter from "./routes/UserRoute.js";
 import limiter from "./middlewares/rateLimiter.js";
 import "dotenv/config.js";
@@ -31,18 +30,48 @@ import copyDatabase from "./utils/copyDatabase.js";
 const app = express();
 const port = process.env.PORT || 80;
 
-// Trust Render's proxy for correct protocol and upgrade handling
-app.set("trust proxy", 1);
+// Create HTTP server and attach Socket.IO
+const server = http.createServer(app);
+export const io = new Server(server, {
+  cors: { origin: "*" },
+});
 
-// Global CORS setup (must come before any routes)
-app.use(corsMiddleware);
-app.options("*", corsMiddleware);
+// Socket.IO integration
+io.on("connection", (socket) => {
+  console.log("New client connected:", socket.id);
 
-// Body parsers
+  // When a driver joins, have them join their specific room
+  socket.on("joinDriverRoom", async (driverId) => {
+    socket.join(driverId);
+    console.log(`Driver ${driverId} joined room.`);
+  });
+  // User room joining
+  socket.on("joinUserRoom", (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined room.`);
+  });
+
+    // Admin room joining
+    socket.on("joinAdminRoom", (adminId) => {
+      socket.join(adminId);
+      console.log(`Admin ${adminId} joined room.`);
+    });  
+    
+    socket.on('driverLocationUpdate', (data) => {
+      // data = { driverId, location: { lat, lng } }
+      io.emit('updateDriverLocation', data); // Broadcast to all connected clients
+    });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Cookie and session setup
+app.use(corsMiddleware);
+app.options("*", corsMiddleware);
 app.use(cookieParser());
 app.use(
   session({
@@ -56,16 +85,12 @@ app.use(
     },
   })
 );
-
-// Passport initialization
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Database copy and connection
-copyDatabase()
-  .then(() => console.log("Database copy completed"))
-  .catch(console.error);
+copyDatabase().then(console.log).catch(console.error);
 
+// DB Connection and Super Admin setup
 connectDB().then(() => {
   ensureSuperAdminExists();
 });
@@ -86,19 +111,13 @@ app.use("/api/notification", notificationRouter);
 app.use("/api/placeApi", userRouter);
 app.use("/api/auth", userRouter);
 app.use("/api/chat", BotRouter);
-app.use(
-  "/api/protected",
-  authMiddleware,
-  (req, res) => {
-    res.send("Hello, authenticated user!");
-  }
-);
+app.use("/api/protected", authMiddleware, (req, res) => {
+  res.send("Hello, authenticated user!");
+});
 
-// Security and error handling
+// Other middleware and logging
 app.use(securityMiddleware);
 app.use(errorHandler);
-
-// Logger for unmatched routes
 app.get("/", (req, res) => {
   res.send("API working");
 });
@@ -106,53 +125,8 @@ app.use((req, res, next) => {
   logger.info(`Request: ${req.method} ${req.url}`);
   next();
 });
-
-app.use((req, res) => {
+app.use((req, res, next) => {
   res.status(404).json({ message: "Endpoint not found" });
-});
-
-// Create HTTP server and attach Socket.IO
-const server = http.createServer(app);
-export const io = new Server(server, {
-  cors: {
-    origin: corsOptions.origin,
-    methods: corsOptions.methods,
-    credentials: corsOptions.credentials,
-    allowedHeaders: corsOptions.allowedHeaders,
-  },
-  transports: ["websocket", "polling"],
-  path: "/socket.io",
-  pingTimeout: 60000,
-  pingInterval: 25000,
-  allowEIO3: true,
-});
-
-// Socket.IO integration
-io.on("connection", (socket) => {
-  console.log("New client connected:", socket.id);
-
-  socket.on("joinDriverRoom", (driverId) => {
-    socket.join(driverId);
-    console.log(`Driver ${driverId} joined room.`);
-  });
-
-  socket.on("joinUserRoom", (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined room.`);
-  });
-
-  socket.on("joinAdminRoom", (adminId) => {
-    socket.join(adminId);
-    console.log(`Admin ${adminId} joined room.`);
-  });
-
-  socket.on("driverLocationUpdate", (data) => {
-    io.emit("updateDriverLocation", data);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
-  });
 });
 
 // Start the server
