@@ -25,8 +25,6 @@ import notificationRouter from "./routes/NotificationRoute.js";
 import { connectDB } from "./config/Db.js";
 import fareRouter from "./routes/FareRoute.js";
 import copyDatabase from "./utils/copyDatabase.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
 // App configuration
 const app = express();
@@ -36,28 +34,6 @@ const port = process.env.PORT || 80;
 const server = http.createServer(app);
 export const io = new Server(server, {
   cors: { origin: "*" },
-});
-
-// 1) Derive __dirname in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
-
-app.use(
-  express.static(path.join(__dirname, "dist"), {
-    setHeaders(res, filePath) {
-      // For safety, enforce JS MIME for module scripts
-      if (filePath.endsWith(".js") || filePath.endsWith(".mjs")) {
-        res.setHeader("Content-Type", "application/javascript");  // override binary/octet-stream :contentReference[oaicite:3]{index=3}
-      }
-    },
-  })
-);
-
-// 2. SPA fallback (must come after express.static)
-app.get("*", (req, res, next) => {
-  // Skip API routes
-  if (req.path.startsWith("/api/")) return next();
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 // Socket.IO integration
