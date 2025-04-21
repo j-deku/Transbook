@@ -72,7 +72,7 @@ const registerUser = async (req, res) => {
       // Send push notification
       if (user.fcmToken) {
         const pushPayload = {
-          title: `Welcome to TransBook, ${user.name}!`,
+          title: `Welcome to TOLI-TOLI, ${user.name}!`,
           body: "Book Your Ride, Get Your Receipt. Explore our Menu to book your rides now!😊🚗.",
           data: {
             type: "register",
@@ -229,7 +229,7 @@ const loginUser = async (req, res) => {
     if (user.fcmToken) {
       const pushPayload = {
         title: `Welcome back, ${user.name}!`,
-        body: "You have successfully logged in into TransBook. Check out your dashboard for updates😊😊.",
+        body: "You have successfully logged in into TOLI-TOLI. Check out your dashboard for updates😊😊.",
         data: {
           type: "login",
           tag: "login",
@@ -237,7 +237,7 @@ const loginUser = async (req, res) => {
         },
       };
 
-            const notificationMessage = `Hi ${user.name}! Welcome back to transBook. We missed you alot☺️`;
+            const notificationMessage = `Hi ${user.name}! Welcome back to TOLI-TOLI. We missed you alot☺️`;
             const newNotification = new Notification({
               userId: user.id,
               message: notificationMessage,

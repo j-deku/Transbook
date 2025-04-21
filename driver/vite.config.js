@@ -16,7 +16,7 @@ export default defineConfig({
         "description":"Book Your Rides, Get Your Receipts.",
         "screenshots": [
           {
-            "src": "/TT-logo.png",
+            "src": "/TT-logo-1024x1024.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose":"maskable",
@@ -32,21 +32,15 @@ export default defineConfig({
         ],
         "icons": [
           {
-            "src": "/TT-logo.png",
+            "src": "/TT-logo-144x144.png",
             "sizes": "144x144",
             "type": "image/png",
             "purpose":"any",
             "form_factor":"wide"
           },
           {
-            "src": "/TT-logo.png",
+            "src": "/TT-logo-32x32.png",
             "sizes": "32x32",
-            "type": "image/png",
-            "purpose":"maskable"
-          },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "256x256",
             "type": "image/png",
             "purpose":"maskable"
           },
@@ -57,69 +51,27 @@ export default defineConfig({
             "purpose":"maskable"
           },
           {
-            "src": "/TT-logo.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose":"maskable"
-          },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose":"maskable"    
-          },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "1024x1366",
-            "type": "image/png",
-            "purpose":"maskable"
-          },
-          {
-            "src": "/TT-logo.png",
+            "src": "/TT-logo-1024x1024.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/TT-logo.png",
+            "src": "/TT-logo-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose":"maskable"
           },
           {
-            "src": "/TT-logo.png",
+            "src": "/TT-logo-192x192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose":"maskable"
           },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose":"maskable"
-          },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "414x736",
-            "type": "image/png",
-            "purpose":"maskable"
-          },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "720x1440",
-            "type": "image/png",
-            "purpose":"maskable"
-          },
-          {
-            "src": "/TT-logo.png",
-            "sizes": "353x745",  
-            "type": "image/png",
-            "purpose":"any"
-          }
         ],
         "related_applications":[],
         "start_url": "/",
-        "id":"TOLI-TOLI",
+        "id":"floral-decor",
         "background_color": "#FFFFFF",
         "theme_color": "#2C3E50",
         "display_override": ["fullscreen", "minimal-ui"],
@@ -147,7 +99,7 @@ export default defineConfig({
   base:'/',
   server: {
     proxy: {
-      '/api': import.meta.url,
+      '/api':import.meta.url,
     },
   },
   build: {
