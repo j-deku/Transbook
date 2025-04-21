@@ -10,7 +10,16 @@ const corsOptions = {
   allowedHeaders: [
     'Content-Type',
     'Authorization',
-    'X-Requested-With',]
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'X-CSRF-Token',
+    'X-HTTP-Method-Override',
+    'X-HTTP-Method',
+    'X-HTTP-Method-Override',
+    'application/json',
+    'application/javascript',
+  ]
 };
 
 const corsMiddleware = cors(corsOptions);

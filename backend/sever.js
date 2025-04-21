@@ -1,73 +1,69 @@
+// sever.js
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import http from "http";
+import { Server } from "socket.io";
+
 import corsMiddleware from "./middlewares/cors.js";
 import userRouter from "./routes/UserRoute.js";
-import limiter from "./middlewares/rateLimiter.js";
-import "dotenv/config.js";
 import cartRouter from "./routes/CartRoute.js";
 import bookRouter from "./routes/BookingRoute.js";
+import permissionRouter from "./routes/PermissionRoute.js";
+import adminRouter from "./routes/AdminRoute.js";
+import driverRouter from "./routes/DriverRoute.js";
+import rideRouter from "./routes/RideRoute.js";
+import fareRouter from "./routes/FareRoute.js";
+import notificationRouter from "./routes/NotificationRoute.js";
+import BotRouter from "./routes/BotRoute.js";
+
+import limiter from "./middlewares/rateLimiter.js";
 import authMiddleware from "./middlewares/auth.js";
 import securityMiddleware from "./middlewares/security.js";
 import logger from "./middlewares/logger.js";
 import errorHandler from "./middlewares/errorHandler.js";
-import permissionRouter from "./routes/PermissionRoute.js";
-import session from "express-session";
+
 import cookieParser from "cookie-parser";
-import "./config/passport.js";
+import session from "express-session";
 import passport from "./config/passport.js";
-import BotRouter from "./routes/BotRoute.js";
-import adminRouter from "./routes/AdminRoute.js";
-import driverRouter from "./routes/DriverRoute.js";
-import rideRouter from "./routes/RideRoute.js";
-import http from "http";
-import { Server } from "socket.io";
-import { ensureSuperAdminExists } from "./controllers/AdminController.js";
-import notificationRouter from "./routes/NotificationRoute.js";
+
 import { connectDB } from "./config/Db.js";
-import fareRouter from "./routes/FareRoute.js";
+import { ensureSuperAdminExists } from "./controllers/AdminController.js";
 import copyDatabase from "./utils/copyDatabase.js";
 
-// App configuration
+import "dotenv/config.js";
+
+// ── ESM __dirname Derivation ───────────────────────────────────────────────────
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+// ── App & Server Setup ─────────────────────────────────────────────────────────
 const app = express();
 const port = process.env.PORT || 80;
 
-// Create HTTP server and attach Socket.IO
+// Create HTTP server & attach Socket.IO
 const server = http.createServer(app);
 export const io = new Server(server, {
   cors: { origin: "*" },
+  transports: ["websocket", "polling"],
+  path: "/socket.io",
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  allowEIO3: true,
 });
 
-// Socket.IO integration
-io.on("connection", (socket) => {
-  console.log("New client connected:", socket.id);
+// ── 1) Serve Vite Build Output ─────────────────────────────────────────────────
+app.use(
+  express.static(path.join(__dirname, "dist"), {
+    setHeaders(res, filePath) {
+      if (filePath.endsWith(".js") || filePath.endsWith(".jsx") || filePath.endsWith(".mjs")) {
+        res.setHeader("Content-Type", "application/javascript");
+      }
+    },
+  })
+);
 
-  // When a driver joins, have them join their specific room
-  socket.on("joinDriverRoom", async (driverId) => {
-    socket.join(driverId);
-    console.log(`Driver ${driverId} joined room.`);
-  });
-  // User room joining
-  socket.on("joinUserRoom", (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined room.`);
-  });
-
-    // Admin room joining
-    socket.on("joinAdminRoom", (adminId) => {
-      socket.join(adminId);
-      console.log(`Admin ${adminId} joined room.`);
-    });  
-    
-    socket.on('driverLocationUpdate', (data) => {
-      // data = { driverId, location: { lat, lng } }
-      io.emit('updateDriverLocation', data); // Broadcast to all connected clients
-    });
-
-  socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
-  });
-});
-
-// Middleware setup
+// ── 2) Core Middleware ──────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(corsMiddleware);
@@ -87,18 +83,9 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-copyDatabase().then(console.log).catch(console.error);
-
-// DB Connection and Super Admin setup
-connectDB().then(() => {
-  ensureSuperAdminExists();
-});
-
-// Rate limiter middleware
 app.use(limiter);
 
-// Mount API endpoints
+// ── 3) API Route Mounts ─────────────────────────────────────────────────────────
 app.use("/api/user", userRouter);
 app.use("/api/rides", rideRouter);
 app.use("/api/cart", cartRouter);
@@ -111,25 +98,62 @@ app.use("/api/notification", notificationRouter);
 app.use("/api/placeApi", userRouter);
 app.use("/api/auth", userRouter);
 app.use("/api/chat", BotRouter);
-app.use("/api/protected", authMiddleware, (req, res) => {
-  res.send("Hello, authenticated user!");
+app.use(
+  "/api/protected",
+  authMiddleware,
+  (req, res) => res.send("Hello, authenticated user!")
+);
+
+// ── 4) SPA Fallback (after API & static) ────────────────────────────────────────
+app.get("*", (req, res, next) => {
+  // Skip API and static asset requests
+  if (
+    req.path.startsWith("/api/") ||
+    req.path.startsWith("/assets/") ||
+    !req.accepts("html")
+  ) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-// Other middleware and logging
+// ── 5) Additional Middleware & Error Handling ───────────────────────────────────
 app.use(securityMiddleware);
 app.use(errorHandler);
-app.get("/", (req, res) => {
-  res.send("API working");
-});
-app.use((req, res, next) => {
-  logger.info(`Request: ${req.method} ${req.url}`);
-  next();
-});
-app.use((req, res, next) => {
+app.use((req, res) => {
+  logger.info(`404 Not Found: ${req.method} ${req.url}`);
   res.status(404).json({ message: "Endpoint not found" });
 });
 
-// Start the server
+// ── 6) Socket.IO Integration ───────────────────────────────────────────────────
+io.on("connection", (socket) => {
+  console.log("New client connected:", socket.id);
+
+  socket.on("joinDriverRoom", (driverId) => {
+    socket.join(driverId);
+    console.log(`Driver ${driverId} joined room.`);
+  });
+  socket.on("joinUserRoom", (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined room.`);
+  });
+  socket.on("joinAdminRoom", (adminId) => {
+    socket.join(adminId);
+    console.log(`Admin ${adminId} joined room.`);
+  });
+  socket.on("driverLocationUpdate", (data) => {
+    io.emit("updateDriverLocation", data);
+  });
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+// ── 7) Database & Super‑Admin Setup ─────────────────────────────────────────────
+copyDatabase().catch(console.error);
+connectDB().then(() => ensureSuperAdminExists());
+
+// ── Start Server ───────────────────────────────────────────────────────────────
 server.listen(port, () => {
   console.log(`Server running on port http://localhost:${port}`);
 });
