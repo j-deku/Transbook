@@ -14,6 +14,7 @@
     place-self: center;
     text-align: center;
     width: 90%;
+    font-family: 'Poppins', sans-serif;
 }
 .form-submitted h1{
     color: #333;
@@ -25,7 +26,10 @@
 .form-submitted p b{
     color: tomato;
 }
-
+.form-submitted .loader{
+    width: 50%;
+    margin: 20px auto;
+}
 @media (max-width:750px) {
     .overlay{
         position:fixed;
@@ -39,6 +43,20 @@
         margin-top: 30%;
         width: 100%;
         padding: 0 30px;
+        position: fixed;
+    }
+    .form-submitted h1{
+        font-size: 26px;
+    }
+    .form-submitted p{
         font-size: 18px;
+    }
+    .form-submitted p b{
+        font-size: 16px;
+        font-weight: bolder;
+    }
+    .form-submitted .loader{
+        width: 90%;
+        margin: 20px auto;
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import './FormSubmitted.css'
-
+import {Skeleton} from 'antd';
 const FormSubmitted = () => {
   return (
     <div className='overlay'>
@@ -11,6 +11,8 @@ const FormSubmitted = () => {
     <br/>Wait for further enquiries/approval of your registration in 2-3 days. <br/><br/>
 
     <br/><b>*</b> Please thoroughly check your email for your updates.</em></p>
+    <Skeleton active paragraph={{ rows: 4 }} title={false} className='loader'/>
+    <br/>
     </div>
     </div>
   )
