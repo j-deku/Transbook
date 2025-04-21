@@ -103,6 +103,7 @@ export default defineConfig({
     },
   },
   build: {
+    target: 'esnext',          // allow top-level await
     rollupOptions: {
       output: {
         manualChunks(id) {
