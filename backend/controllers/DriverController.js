@@ -303,7 +303,6 @@ const resetPassword = async (req, res) => {
     });
     if (!driver) return res.status(400).json({ message: "Invalid or expired token" });
 
-    // Hash the new password and update admin record
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     driver.password = hashedPassword;
     driver.resetToken = null;

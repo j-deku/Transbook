@@ -48,7 +48,7 @@ const PasswordReset = () => {
       setMessage(res.data.message);
       resetForm();
       // Redirect to login page after 3 seconds
-      setTimeout(() => navigate("/login"), 3000);
+      setTimeout(() => navigate("/"), 3000);
     } catch (error) {
       setMessage(
         "Error: " +
