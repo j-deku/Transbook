@@ -23,8 +23,8 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.data?.title || payload.notification.title;
   const notificationOptions = {
     body: payload.data?.body || payload.notification.body,
-    icon: '/push_notification_icon.png',
-    badge: '/badge_icon.png',
+    icon: '/TT-logo-32x32.png',
+    badge: '/TT-logo-32x32.png',
     image: "/CarRent.jpeg",
     requireInteraction: true, // Keep notification visible until interaction
     tag: payload.data?.tag || 'transbook-notification',

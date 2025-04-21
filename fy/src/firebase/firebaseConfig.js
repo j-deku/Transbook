@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import axiosInstance from "../../axiosInstance"; // adjust the path if needed
+import axiosInstance from "../../axiosInstance";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDOMY_PtpH7l8U3c40Zr-eqd0Ev2jVOml0",
@@ -12,47 +12,72 @@ const firebaseConfig = {
   measurementId: "G-WGM5X7HCC2"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// Request permission and get FCM token
-export const requestForToken = async () => {
-  const url = import.meta.env.VITE_API_BASE_URL;
+/**
+ * Requests an FCM registration token and updates backend if available.
+ * @param {{ registration?: ServiceWorkerRegistration }} options - Optional service worker registration.
+ * @returns {Promise<string | null>} The FCM token or null.
+ */
+export async function requestForToken({ registration } = {}) {
   try {
-    const registration = await navigator.serviceWorker.ready;
-    const currentToken = await getToken(messaging, { vapidKey: "BLyKaxjUNVYvCWI2qTr5LGbQ1crOsd8FJNEAXiRmhj1Jpu0ZdeZxWllO_aqW2fWhqH0-3LJ1EOPFC-gTmIN1fl0", serviceWorkerRegistration: registration, });
+    // Ensure notifications are permitted
+    if (Notification.permission !== 'granted') {
+      console.warn('Notification permission not granted:', Notification.permission);
+      return null;
+    }
+
+    // Use provided SW registration or wait until one is ready
+    const reg = registration || await navigator.serviceWorker.ready;
+
+    // Retrieve the token
+    const currentToken = await getToken(messaging, {
+      vapidKey: import.meta.env.VITE_VAPID_KEY,
+      serviceWorkerRegistration: reg,
+    });
+
     if (currentToken) {
-      console.log("FCM Token:", currentToken);
-      // Only update the backend if a valid auth token exists
-      const authToken = localStorage.getItem("token");
+      console.log('FCM Token:', currentToken);
+
+      // Update token on backend if user is authenticated
+      const authToken = localStorage.getItem('token');
       if (authToken) {
         try {
-          await axiosInstance.post(`${url}/api/user/update-token`, { fcmToken: currentToken }, {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
-          console.log("FCM token updated on backend");
+          await axiosInstance.post(
+            `${import.meta.env.VITE_API_BASE_URL}/api/user/update-token`,
+            { fcmToken: currentToken },
+            { headers: { Authorization: `Bearer ${authToken}` } }
+          );
+          console.log('FCM token updated on backend');
         } catch (updateError) {
-          console.error("Error updating FCM token on backend:", updateError.response?.data || updateError.message);
+          console.error('Error updating FCM token on backend:', updateError);
         }
       } else {
-        console.warn("No auth token found; skipping FCM token update.");
+        console.warn('No auth token found; skipping FCM token update.');
       }
       return currentToken;
     } else {
-      console.log("No registration token available. Request permission to generate one.");
+      console.log('No registration token available. Request permission to generate one.');
       return null;
     }
   } catch (err) {
-    console.log("An error occurred while retrieving token. ", err);
+    console.error('An error occurred while retrieving token:', err);
     return null;
   }
-};
+}
 
-export const onMessageListener = () =>
-  new Promise((resolve) => {
+/**
+ * Listens for incoming FCM messages when the page is in the foreground.
+ * @returns {Promise<any>} Promise that resolves with the message payload.
+ */
+export function onMessageListener() {
+  return new Promise((resolve) => {
     onMessage(messaging, (payload) => {
       resolve(payload);
     });
   });
+}
 
 export { messaging };

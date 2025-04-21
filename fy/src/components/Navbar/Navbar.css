@@ -332,6 +332,9 @@ p.profileName{
     .navbar-right .searchImage{
         display: none;
     }
+    .navbar-right .person-icon{
+        margin-right: 60px;
+    }
 }
 @media (max-width:600px) {
     .navbar-right{

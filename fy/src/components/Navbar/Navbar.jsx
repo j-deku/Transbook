@@ -178,7 +178,7 @@ const Navbar = ({ setLogin }) => {
               {user && user.avatar ? (
                 <img src={user.avatar} alt="User" className="profile-picture" />
               ) : (
-                <PersonIcon style={{ fontSize: "25px", color: "#fff" }} />
+                <PersonIcon style={{ fontSize: "25px", color: "#fff" }} className="person-icon"/>
               )}
               <ul className="navbar-profile-dropdown">
                 <li onClick={() => navigate("/profile")}>
