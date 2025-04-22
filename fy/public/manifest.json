@@ -2,6 +2,11 @@
   "name": "TOLI-TOLI",
   "short_name": "TOLI-TOLI",
   "description":"Book your rides, get your receipts!",
+  "lang":"en",
+  "dir":"ltr",
+  "global":true,
+  "gcm_sender_id":"103953800507",
+  "gcm_user_visible_only":true,
   "screenshots": [
     {
       "src": "/TT-logo-1024x1024.png",
@@ -9,7 +14,15 @@
       "type": "image/png",
       "purpose":"maskable",
       "form_factor":"narrow"
+    },
+    {
+      "src": "/TT-logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose":"any",
+      "form_factor":"wide"
     }
+
   ],
   "icons": [
     {
