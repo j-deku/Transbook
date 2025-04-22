@@ -40,6 +40,7 @@ const Navbar = ({ setLogin }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("user");
+    localStorage.removeItem("fcmToken");
     setToken("");
     setUser({});
     navigate("/");

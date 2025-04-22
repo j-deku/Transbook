@@ -186,89 +186,68 @@ const resendOTP = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+
+const loginUser = async (req, res) =>{
   const { email, password } = req.body;
 
   try {
+    // 1) Find user and validate credentials
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.json({
-        success: false,
-        message: "No account found with this email. \n Please register first.",
-      });
+      return res.status(404).json({ success: false, message: "No account found with this email. Please register first." });
     }
-
     if (!user.verified) {
-      return res.json({
-        success: false,
-        message: "Please verify your email to continue.",
-        redirect: "/verify-otp",
-      });
+      return res.status(403).json({ success: false, message: "Please verify your email to continue.", redirect: "/verify-otp" });
     }
-
     if (!user.password) {
-      return res.json({
-        success: false,
-        message:
-          "This account was created using Google. Please use Google login.",
-      });
+      return res.status(400).json({ success: false, message: "Use Google login for this account." });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.json({
-        success: false,
-        message: "Invalid email or password.",
-      });
+      return res.status(401).json({ success: false, message: "Invalid email or password." });
     }
 
+    // 2) Generate JWT and send welcome email
     const token = createToken(user._id);
-    await sendEmail(email, "Welcome Back 🚌", EmailWelcome(user.name));
+    await sendEmail(user.email, "Welcome Back 🚌", EmailWelcome(user.name));
 
-    // Send push notification
+    // 3) Persist an internal notification record
+    const notificationMessage = `Hi ${user.name}! Welcome back to TOLI-TOLI.`;
+    await Notification.create({
+      userId: user._id,
+      message: notificationMessage,
+      type: "login",
+      isRead: false,
+    });
+
+    // 4) Send FCM push notification if token exists
     if (user.fcmToken) {
       const pushPayload = {
         title: `Welcome back, ${user.name}!`,
-        body: "You have successfully logged in into TOLI-TOLI. Check out your dashboard for updates😊😊.",
+        body:  "You have successfully logged in into TOLI-TOLI. Check your dashboard for updates 😊",
         data: {
           type: "login",
-          tag: "login",
-          url: "/myBookings", // Direct the user to their booking dashboard
+          tag:  "login",
+          url:  "/myBookings",
         },
       };
-
-            const notificationMessage = `Hi ${user.name}! Welcome back to TOLI-TOLI. We missed you alot☺️`;
-            const newNotification = new Notification({
-              userId: user.id,
-              message: notificationMessage,
-              type: "login",
-              isRead: false,
-            });
-            await newNotification.save();
-
       try {
         await sendPushNotification(user.fcmToken, pushPayload);
-        console.log("Push notification sent successfully on login.");
-      } catch (pushError) {
-        console.error("Error sending push notification:", pushError);
+      } catch (pushErr) {
+        // Already logged in utility; here we just note it
+        console.error("Login push failed:", pushErr.code || pushErr.message);
       }
     } else {
-      console.warn("User FCM token not found; push notification not sent.");
+      console.warn("No FCM token for user; push not sent.");
     }
 
-    res.json({
-      success: true,
-      token,
-      message: "Login Successful!",
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.json({
-      success: false,
-      message: "Something went wrong. Please try again later.",
-    });
+    // 5) Return success response
+    return res.json({ success: true, token, message: "Login successful!" });
+  } catch (err) {
+    console.error("Error in loginUser:", err);
+    return res.status(500).json({ success: false, message: "Something went wrong. Please try again later." });
   }
-};
+}
 
 // ✅ Forgot Password
 const forgotPassword = async (req, res) => {

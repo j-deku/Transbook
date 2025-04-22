@@ -1,2 +1,0 @@
-{"level":"error","message":"Invalid phone number: 0245626709"}
-{"level":"error","message":"Error sending SMS: Invalid phone number format","stack":"Error: Invalid phone number format\n    at sendSMSNotification (file:///D:/New%20downloads/client/TransBook/backend/utils/SendSMS.js:32:13)\n    at driverRespondToRide (file:///D:/New%20downloads/client/TransBook/backend/controllers/DriverController.js:707:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}

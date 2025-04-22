@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "driver", "admin"], 
       default: "user" 
     },
-    fcmToken: { type: String, default: "" }
+    fcmToken: { type: String, default: "", unique: true, sparse: true, require:true }, // Firebase Cloud Messaging token
   },
   { timestamps: true }
 );
