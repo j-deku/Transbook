@@ -48,7 +48,7 @@ export async function requestForToken({ registration } = {}) {
     if (!swReg) return null;
 
     const token = await getToken(messaging, {
-      vapidKey: "BLyKaxjUNVYvCWI2qTr5LGbQ1crOsd8FJNEAXiRmhj1Jpu0ZdeZxWllO_aqW2fWhqH0-3LJ1EOPFC-gTmIN1fl0",
+      vapidKey: "BDSl_SrpS6IuLO3zl1_lLF5f6jZ2lrUdmHdt3u6LG3iut5NtMyMSREms0xUd5oPctD-GxOt9Lm8d52hF-zbXCqY",
       serviceWorkerRegistration: swReg,
     });  // retrieve token :contentReference[oaicite:4]{index=4}
 
