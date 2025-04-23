@@ -4,7 +4,6 @@
   "description":"Book your rides, get your receipts!",
   "lang":"en",
   "dir":"ltr",
-  "global":true,
   "gcm_sender_id":"103953800507",
   "screenshots": [
     {

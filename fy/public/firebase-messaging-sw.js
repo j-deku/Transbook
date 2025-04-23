@@ -1,4 +1,18 @@
 /* eslint-disable no-undef */
+// 1) Load Workbox
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
+
+// 2) Safely grab the injected manifest (or fall back to an empty array)
+const precacheList = Array.isArray(self.__WB_MANIFEST)
+  ? self.__WB_MANIFEST
+  : [];
+
+// 3) Only precache if we have entries
+if (precacheList.length > 0) {
+  workbox.precaching.precacheAndRoute(precacheList);
+}
+
+/* eslint-disable no-undef */
 /* global firebase */
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');

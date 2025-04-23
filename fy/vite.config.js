@@ -7,6 +7,17 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType:'autoUpdate',
+      srcDir: 'public',              // where your firebase-messaging-sw.js lives
+      filename: 'firebase-messaging-sw.js', // name of the service worker file
+      includeAssets: [ 'TT-logo-1024x1024.png', 'TT-logo-512x512.png', 'TT-logo-192x192.png'],
+      injectManifest: {
+        globPatterns: ['**/*.{js,jsx,css,html,png,jpg,jpeg,svg,ico,json}'],
+        globIgnores: ['firebase-messaging-sw.js', 'firebase-messaging-sw.js.map'],        
+        swSrc: 'public/firebase-messaging-sw.js', // custom service worker
+        swDest: 'firebase-messaging-sw.js', // output service worker
+        mode: 'production', // Set to 'production' for production builds
+        sourcemap: true, // Enable sourcemaps for easier debugging        
+      },
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Set to 5MB
       },
@@ -93,15 +104,10 @@ export default defineConfig({
             "url":"/handler?/=%s"
           }
         ]
-      }
+      },
+      base:'/',
     })
   ],
-  base:'/',
-  server: {
-    proxy: {
-      '/api':import.meta.url,
-    },
-  },
   build: {
     target: 'esnext',          // allow top-level await
     rollupOptions: {
