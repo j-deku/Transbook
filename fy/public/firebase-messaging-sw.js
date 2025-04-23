@@ -102,3 +102,5 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
 });
+
+self.addEventListener('fetch', e => console.log('Intercepting:', e.request.url));
