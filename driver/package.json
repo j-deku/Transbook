@@ -40,7 +40,6 @@
         "react-toastify": "^11.0.3",
         "recharts": "^2.15.1",
         "socket.io-client": "^4.8.1",
-        "vite-plugin-pwa": "^0.21.1",
         "yup": "^1.6.1"
     },
     "devDependencies": {
@@ -53,6 +52,7 @@
         "eslint-plugin-react-hooks": "^5.0.0",
         "eslint-plugin-react-refresh": "^0.4.18",
         "globals": "^15.14.0",
-        "vite": "^6.1.0"
+        "vite": "^6.1.0",
+        "vite-plugin-pwa": "^1.0.0"
     }
 }

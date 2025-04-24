@@ -71,9 +71,9 @@ self.addEventListener('notificationclick', event => {
 self.addEventListener('fetch', e => console.log('[SW] fetch:', e.request.url))
 
 self.addEventListener('push', event => {
-  console.log('[SW] raw push event data:', event.data && event.data.text());
+  console.log('[SW] push event data:', event.data?.text());
   const data = event.data.json();
-  const title = data.data?.title || 'Welcome to TOLI-TOLI!';
-  const options = { body: data.data?.body, icon: '/TT-logo-32x32.png' };
+  const title = data.data?.title || 'Notification';
+  const options = { body: data.data?.body };
   event.waitUntil(self.registration.showNotification(title, options));
 });

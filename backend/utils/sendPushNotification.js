@@ -12,25 +12,33 @@ import { removeTokenFromDatabase } from "./tokenService.js";
  * @throws Will re-throw unexpected errors after logging.
  */
 export async function sendPushNotification(fcmToken, payload) {
+  // ▸ Build a data-only message:
   const message = {
     token: fcmToken,
-    notification: {
+    data: {
       title: payload.title,
       body:  payload.body,
+      // spread any extra custom fields (e.g. url, tag)
+      ...payload.data
     },
-    data: payload.data || {},
-  };
+    // ensure high-priority on Android/iOS:
+    android:  { priority: 'high' },
+    apns:    { headers: { 'apns-priority': '10' } }
+  }
 
   try {
-    const messageId = await admin.messaging().send(message);
-    console.info(`Push sent (messageId=${messageId}) to token=${fcmToken}`);
-    return messageId;
-  } catch (err) {
+    const messageId = await admin.messaging().send(message)
+    console.info(`Data-only push sent (messageId=${messageId}) to token=${fcmToken}`)
+    return messageId
+
+  }  catch (err) {
     // Handle invalid/stale registration tokens
-    if (err.code === "messaging/registration-token-not-registered") {
-      console.warn(`FCM token no longer registered: ${fcmToken}. Removing from database.`);
-      await removeTokenFromDatabase(fcmToken);
-    } else {
+    if (err.code === 'messaging/registration-token-not-registered' ||
+      err.code === 'messaging/third-party-auth-error') {
+    console.warn(`Removing invalid FCM token: ${fcmToken} (code=${err.code})`);
+    await removeTokenFromDatabase(fcmToken);
+  }
+   else {
       console.error(`Unexpected error sending push to token=${fcmToken}:`, err);
     }
     // Re-throw so callers know the send failed
