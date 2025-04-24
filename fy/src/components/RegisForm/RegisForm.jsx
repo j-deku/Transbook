@@ -90,6 +90,7 @@ const RegisForm = ({ setLogin }) => {
                 required
                 autoFocus
                 fullWidth
+                autoComplete="name"
                 value={values.name}
                 onChange={(e) => {
                   const capitalizedValue = e.target.value.replace(
@@ -128,6 +129,7 @@ const RegisForm = ({ setLogin }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Enter your email"
+                autoComplete="email"
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
                 inputMode="email"
@@ -151,6 +153,7 @@ const RegisForm = ({ setLogin }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Create a password"
+                autoComplete="new-password"
                 error={touched.password && Boolean(errors.password)}
                 inputMode="password"
                 helperText={touched.password && errors.password}

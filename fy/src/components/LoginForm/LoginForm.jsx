@@ -140,6 +140,7 @@ const LoginForm = ({ setLogin }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Enter your email"
+                autoComplete="email"
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
                 inputMode="email"
@@ -163,6 +164,7 @@ const LoginForm = ({ setLogin }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Enter your password"
+                autoComplete="current-password"
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
                 inputMode="password"

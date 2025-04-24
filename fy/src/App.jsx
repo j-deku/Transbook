@@ -88,6 +88,7 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<PasswordReset />} />
             <Route path="/driveNuser" element={<FirstQuestion />} />
+            <Route path="/firebase-messaging-sw.js" element={null} />
           </Routes>
         </div>
         <Footer />
