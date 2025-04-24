@@ -1,6 +1,5 @@
 /* public/firebase-messaging-sw.js */
 /* global workbox, importScripts, firebase */
-
 // --- 1) Install & Activate: Claim clients immediately ---
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -9,12 +8,12 @@ self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim());
 });
 
-// --- 2) Raw push listener: catch all pushes ---
+// --- 2) Raw push listener: catch all pushes and fix URL origin ---
 self.addEventListener('push', event => {
   console.log('[SW] Raw push event received:', event);
   if (!event.data) return;
 
-  let data = {};
+  let data;
   try {
     data = event.data.json();
   } catch (err) {
@@ -23,15 +22,23 @@ self.addEventListener('push', event => {
   }
 
   const title = data.data?.title || data.notification?.title || 'Notification';
+  const body = data.data?.body || data.notification?.body;
+
+  // Build absolute URL for click action
+  let clickUrl = data.data?.url || '/';
+  if (clickUrl.startsWith('/')) {
+    clickUrl = self.location.origin + clickUrl;
+  }
+
   const options = {
-    body: data.data?.body || data.notification?.body,
+    body,
     icon: '/TT-logo-32x32.png',
     badge: '/TT-logo-32x32.png',
     image: '/CarRent.jpeg',
     requireInteraction: true,
     tag: data.data?.tag || data.notification?.tag,
     renotify: true,
-    data: data.data || {},
+    data: { ...data.data, url: clickUrl },
     actions: [{ action: 'close', title: 'Close' }],
     vibrate: [200, 100, 200]
   };
@@ -68,15 +75,23 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(payload => {
   console.log('[SW] Received background message via FCM:', payload);
   const title = payload.data?.title || payload.notification?.title || 'Notification';
+  const body = payload.data?.body || payload.notification?.body;
+
+  // Build absolute URL for click action
+  let clickUrl = payload.data?.url || '/';
+  if (clickUrl.startsWith('/')) {
+    clickUrl = self.location.origin + clickUrl;
+  }
+
   const options = {
-    body: payload.data?.body || payload.notification?.body,
+    body,
     icon: '/TT-logo-32x32.png',
     badge: '/TT-logo-32x32.png',
     image: '/CarRent.jpeg',
     requireInteraction: true,
     tag: payload.data?.tag || payload.notification?.tag,
     renotify: true,
-    data: payload.data || {},
+    data: { ...payload.data, url: clickUrl },
     actions: [{ action: 'close', title: 'Close' }],
     vibrate: [200, 100, 200]
   };
@@ -95,15 +110,18 @@ messaging.onBackgroundMessage(payload => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   if (event.action === 'close') return;
-  const clickUrl = event.notification.data?.url || '/';
+  const clickUrl = event.notification.data?.url || self.location.origin;
+
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
       for (const client of clients) {
-        if (client.url.includes(clickUrl) && 'focus' in client) {
+        if (client.url === clickUrl && 'focus' in client) {
           return client.focus();
         }
       }
-      return self.clients.openWindow(clickUrl);
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(clickUrl);
+      }
     })
   );
 });
