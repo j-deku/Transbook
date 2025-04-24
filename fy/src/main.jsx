@@ -26,10 +26,10 @@ async function setupFCM() {
 
   try {
     // 1) Register SW at root scope
-    const registration = await navigator.serviceWorker.register(
-      '/firebase-messaging-sw.js',
-      { scope: '/' }
-    )
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' });
+    if (!navigator.serviceWorker.controller) {
+      console.warn('[FCM] SW is not yet controlling this page. Try reload or use navigator.serviceWorker.ready.')
+    }    
     console.log('✅ SW registered with scope:', registration.scope)
 
     // 2) Subscribe to PushManager directly to verify endpoint

@@ -15,11 +15,12 @@ export async function sendPushNotification(fcmToken, payload) {
   // ▸ Build a data-only message:
   const message = {
     token: fcmToken,
+    // 🔑 Use only data – no top-level notification key
     data: {
       title: payload.title,
       body:  payload.body,
-      // spread any extra custom fields (e.g. url, tag)
-      ...payload.data
+      url:   payload.data.url,      // custom fields
+      tag:   payload.data.tag
     },
     // ensure high-priority on Android/iOS:
     android:  { priority: 'high' },
