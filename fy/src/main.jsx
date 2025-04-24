@@ -1,57 +1,71 @@
-// main.jsx
-import './i18n';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import { BrowserRouter } from 'react-router-dom';
-import StoreContextProvider from './context/StoreContext.jsx';
-import { requestForToken, onMessageListener } from './firebase/firebaseConfig.js';
+// src/main.jsx
+import './i18n'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import { BrowserRouter } from 'react-router-dom'
+import StoreContextProvider from './context/StoreContext.jsx'
+import { getToken, onMessage } from 'firebase/messaging'
+import { messaging } from './firebase/firebaseConfig.js'
 
-(async function initializeAppAndFCM() {
-  // 1) Register the service worker at the root scope
-  if ('serviceWorker' in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-      console.log('✅ Service Worker registered with scope:', registration.scope);
-    } catch (swErr) {
-      console.error('❌ Service Worker registration failed:', swErr);
+async function setupFCM() {
+  if (!('serviceWorker' in navigator)) {
+    console.warn('⚠️ Service workers not supported')
+    return
+  }
+
+  try {
+    // 1) Register SW at root scope
+    const registration = await navigator.serviceWorker.register(
+      '/firebase-messaging-sw.js',
+      { scope: '/' }
+    )
+    console.log('✅ SW registered with scope:', registration.scope)
+
+    // 2) Request notification permission
+    const permission = await Notification.requestPermission()
+    if (permission !== 'granted') {
+      console.warn('🔕 Notification permission not granted:', permission)
+      return
     }
-  } else {
-    console.warn('⚠️ Service workers not supported by this browser.');
-  }
 
-  // 2) Request Notification permission
-  if (Notification.permission === 'default') {
-    await Notification.requestPermission();  // prompts the user :contentReference[oaicite:5]{index=5}
-  }
-  if (Notification.permission !== 'granted') {
-    console.warn('🔕 Notification permission not granted:', Notification.permission);  // check static property :contentReference[oaicite:6]{index=6}
-  } else {
-    // 3) Retrieve the FCM token
-    try {
-      const token = await requestForToken();  // uses SW.ready under the hood :contentReference[oaicite:7]{index=7}
-      console.log('🎟️ FCM token:', token);
-    } catch (tokenErr) {
-      console.error('❌ FCM token retrieval failed:', tokenErr);
+    // 3) Get FCM token
+    const vapidKey = 'BDSl_SrpS6IuLO3zl1_lLF5f6jZ2lrUdmHdt3u6LG3iut5NtMyMSREms0xUd5oPctD-GxOt9Lm8d52hF-zbXCqY'
+    const fcmToken = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration })
+    console.log('🎟️ FCM token:', fcmToken)
+
+    // 4) Send token to your backend if needed
+    const authToken = localStorage.getItem('token')
+    if (authToken && fcmToken) {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/update-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ fcmToken })
+      })
+      console.log('🔄 Token synced to backend')
     }
+
+    // 5) Listen for foreground messages
+    onMessage(messaging, payload => {
+      console.log('📩 Foreground message:', payload)
+      // TODO: show an in-app toast or notification UI
+    })
+  } catch (err) {
+    console.error('❌ FCM setup error:', err)
   }
+}
 
-  // 4) Optional: re‑request token on page focus as a fallback for token rotation
-  window.addEventListener('focus', () => {
-    requestForToken().then((t) => console.log('🔄 FCM token refreshed on focus:', t));
-  });
+;(async () => {
+  await setupFCM()
 
-  // 5) Listen for foreground messages
-  onMessageListener().then((payload) => {
-    console.log('📩 Foreground FCM message received:', payload);
-  });
-
-  // 6) Mount your React application
   ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <StoreContextProvider>
         <App />
       </StoreContextProvider>
     </BrowserRouter>
-  );
-})();
+  )
+})()
