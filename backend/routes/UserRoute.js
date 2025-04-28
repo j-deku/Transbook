@@ -12,6 +12,7 @@ import {
   forgotPassword,
   resetPassword,
   updateFCMToken,
+  deleteFCMToken,
 } from "../controllers/UserController.js";
 import authMiddleware from "../middlewares/auth.js";
 
@@ -51,6 +52,8 @@ UserRouter.post("/resend-otp", otpLimiter, resendOTP);
 UserRouter.post("/forgot-password", forgotPassword);
 UserRouter.post("/reset-password/:token", resetPassword);
 UserRouter.post("/update-token", authMiddleware, updateFCMToken);
+UserRouter.post("/delete-token", authMiddleware, deleteFCMToken);
+
 
 //placeApi route
 UserRouter.get("/autoComplete", placesApi);

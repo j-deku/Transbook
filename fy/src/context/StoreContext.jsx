@@ -1,15 +1,16 @@
-import { createContext, useEffect, useState } from "react";
+// src/context/StoreContext.jsx
+import React, { createContext, useEffect, useState, useCallback } from "react";
 import PropTypes from 'prop-types';
 
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = ({ children }) => {
-  // Initialize cartItems from localStorage if available, otherwise an empty array
+  // Cart items state
   const [cartItems, setCartItems] = useState(() => {
     const saved = localStorage.getItem("selectedRides");
     return saved ? JSON.parse(saved) : [];
   });
-  
+
   const url = import.meta.env.VITE_API_BASE_URL;
   const [token, setToken] = useState("");
   const [cookie, setCookie] = useState("");
@@ -17,35 +18,58 @@ const StoreContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [searchData, setSearchData] = useState(null);
 
-  // Check for token and fetch user data on mount
+  // Event listeners registry for logout
+  const logoutListeners = React.useRef(new Set()).current;
+
+  const subscribeLogout = useCallback((fn) => {
+    logoutListeners.add(fn);
+  }, [logoutListeners]);
+
+  const unsubscribeLogout = useCallback((fn) => {
+    logoutListeners.delete(fn);
+  }, [logoutListeners]);
+
+  // Trigger logout and notify listeners
+  const logout = useCallback(() => {
+    // Clear user state & storage
+    setToken("");
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    // Notify subscribers
+    logoutListeners.forEach(fn => {
+      try { fn(); } catch (e) { console.error('Logout listener error:', e); }
+    });
+  }, [logoutListeners]);
+
+  // On init, load token & user
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (storedUser) {
-        setUser(storedUser);
-      }
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  // Capture user data after Google login
+  // Google login redirect handling
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const name = urlParams.get('name');
-    const email = urlParams.get('email');
-    const avatar = urlParams.get('avatar');
-
-    if (token) {
-      localStorage.setItem('token', token);
+    const params = new URLSearchParams(window.location.search);
+    const jwt = params.get('token');
+    if (jwt) {
+      localStorage.setItem('token', jwt);
+      setToken(jwt);
+      const name = params.get('name');
+      const email = params.get('email');
+      const avatar = params.get('avatar');
       const userData = { name, email, avatar };
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
     }
   }, []);
 
-  // Update localStorage whenever cartItems changes
+  // Persist cartItems
   useEffect(() => {
     localStorage.setItem("selectedRides", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -64,6 +88,12 @@ const StoreContextProvider = ({ children }) => {
     setUser,
     searchData,
     setSearchData,
+    // Logout API: call to clear and notify
+    logout: {
+      exec: logout,
+      subscribe: subscribeLogout,
+      unsubscribe: unsubscribeLogout,
+    },
   };
 
   return (

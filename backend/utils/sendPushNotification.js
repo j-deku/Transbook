@@ -1,16 +1,8 @@
 // utils/pushNotification.js
 import admin from "../firebaseAdmin.js";
+import logger from "../middlewares/logger.js";
 import { removeTokenFromDatabase } from "./tokenService.js";
 
-/**
- * Send a push notification via FCM to a single device token.
- * On `registration-token-not-registered`, removes the token from the database.
- *
- * @param {string} fcmToken - The recipient device's FCM registration token.
- * @param {object} payload  - The notification payload: { title, body, data }.
- * @returns {Promise<string>} The message ID on success.
- * @throws Will re-throw unexpected errors after logging.
- */
 export async function sendPushNotification(fcmToken, payload) {
   // ▸ Build a data-only message:
   const message = {
@@ -19,30 +11,25 @@ export async function sendPushNotification(fcmToken, payload) {
     data: {
       title: payload.title,
       body:  payload.body,
-      url:   payload.data.url,      // custom fields
-      tag:   payload.data.tag
+      ...payload.data,             // pass all data fields
     },
     // ensure high-priority on Android/iOS:
-    android:  { priority: 'high' },
-    apns:    { headers: { 'apns-priority': '10' } }
+    android: { priority: 'high', ttl: 3600 * 1000 },
+    apns:    { headers: { 'apns-priority': '10', 'apns-expiration': `${Math.floor(Date.now()/1000)+3600}` } },
+    fcmOptions: { analyticsLabel: payload.data.tag },
   }
 
   try {
-    const messageId = await admin.messaging().send(message)
-    console.info(`Data-only push sent (messageId=${messageId}) to token=${fcmToken}`)
-    return messageId
-
-  }  catch (err) {
-    // Handle invalid/stale registration tokens
-    if (err.code === 'messaging/registration-token-not-registered' ||
-      err.code === 'messaging/third-party-auth-error') {
-    console.warn(`Removing invalid FCM token: ${fcmToken} (code=${err.code})`);
-    await removeTokenFromDatabase(fcmToken);
-  }
-   else {
-      console.error(`Unexpected error sending push to token=${fcmToken}:`, err);
+    const messageId = await admin.messaging().send(message);
+    logger.info("FCM message sent", { messageId, fcmToken });
+    console.info("FCM message sent", { messageId, fcmToken });
+    return messageId;
+  } catch (err) {
+    logger.error("FCM send error", { code: err.code, message: err.message });
+    if (err.code === 'messaging/registration-token-not-registered') {
+      await removeTokenFromDatabase(fcmToken);
     }
-    // Re-throw so callers know the send failed
+    // swallow or rethrow based on your needs
     throw err;
   }
 }

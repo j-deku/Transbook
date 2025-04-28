@@ -12,7 +12,7 @@ export default defineConfig({
       includeAssets: [ 'TT-logo-1024x1024.png', 'TT-logo-512x512.png', 'TT-logo-192x192.png'],
       injectManifest: {
         globPatterns: ['**/*.{js,jsx,css,html,png,jpg,jpeg,svg,ico,json}'],
-        globIgnores: ['firebase-messaging-sw.js', 'firebase-messaging-sw.js.map'],        
+        globIgnores: ['firebase-messaging-sw.js', 'firebase-messaging-sw.js.map'],           
         swSrc: 'public/firebase-messaging-sw.js', // custom service worker
         swDest: 'firebase-messaging-sw.js', // output service worker
         mode: 'production', // Set to 'production' for production builds
@@ -25,6 +25,7 @@ export default defineConfig({
         "name": "TOLI-TOLI",
         "short_name": "TOLI-TOLI",
         "description":"Book Your Rides, Get Your Receipts.",
+        "gcm_sender_id": "103953800507",
         "screenshots": [
           {
             "src": "/TT-logo-1024x1024.png",

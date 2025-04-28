@@ -21,7 +21,7 @@ import LanguageModal from "../LanguageModal/LanguageModal";
 import ReactCountryFlag from "react-country-flag";
 
 const Navbar = ({ setLogin }) => {
-  const { token, user, setUser, setToken, cartItems } = useContext(StoreContext);
+  const { token, user, setUser, setToken, cartItems, logout: { exec: logoutExec } } = useContext(StoreContext);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -41,6 +41,7 @@ const Navbar = ({ setLogin }) => {
     localStorage.removeItem("userId");
     localStorage.removeItem("user");
     localStorage.removeItem("fcmToken");
+    logoutExec();          // StoreContext logout: clears auth and notifies subscribers
     setToken("");
     setUser({});
     navigate("/");
@@ -162,7 +163,7 @@ const Navbar = ({ setLogin }) => {
     }
   }}
 >
-  <ReactCountryFlag 
+<ReactCountryFlag 
     countryCode={currentCountryCode}
     svg
     style={{ width: '2em', height: '2em', borderRadius: '50%' }}

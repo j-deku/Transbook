@@ -1,30 +1,37 @@
 // utils/tokenService.js
+import logger from '../middlewares/logger.js';
 import userModel from '../models/UserModel.js';
+import { Counter } from 'prom-client';
+
+// Metric: counts how many tokens have been removed
+const tokenRemovalCounter = new Counter({
+  name: 'fcm_token_removals_total',
+  help: 'Total number of FCM tokens removed from user records',
+});
 
 /**
- * Remove an invalid FCM token from any User that has it.
- *
- * @param {string} fcmToken  The FCM registration token to remove.
- * @returns {Promise<boolean>}  True if a user was updated; false otherwise.
+ * Remove all instances of an invalid FCM token from user documents.
+ * Uses updateMany for batch efficiency and increments removal metrics.
+ * @param {string} fcmToken
+ * @returns {Promise<boolean>} True if any documents were modified.
  */
 export async function removeTokenFromDatabase(fcmToken) {
   try {
-    // Unset the fcmToken field on the matching user document
-    const result = await userModel.findOneAndUpdate(
-      { fcmToken },                   // find by token
-      { $unset: { fcmToken: "" } },   // remove the field :contentReference[oaicite:0]{index=0}
-      { new: false }                  // return the _previous_ document
+    const result = await userModel.updateMany(
+      { fcmToken },                 // indexed query for fast lookups
+      { $unset: { fcmToken: "" } } // remove the field
     );
 
-    if (result) {
-      console.info(`Unset fcmToken for user ${result._id}`);  // logging success
+    if (result.modifiedCount > 0) {
+      tokenRemovalCounter.inc(result.modifiedCount);
+      logger.info('Unset fcmToken for user(s)', { fcmToken, count: result.modifiedCount });
       return true;
     } else {
-      console.warn(`No user found with fcmToken=${fcmToken}`);  
+      logger.warn('No users found with fcmToken', { fcmToken });
       return false;
     }
   } catch (err) {
-    console.error(`Failed to remove FCM token ${fcmToken}:`, err);
-    return false;
+    logger.error('Error removing FCM token', { fcmToken, error: err });
+    throw err; // let calling queue or service handle retries
   }
 }

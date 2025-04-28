@@ -17,6 +17,7 @@ import {
 } from "../utils/EmailTemplates.js";
 import { sendPushNotification } from "../utils/sendPushNotification.js";
 import Notification from "../models/NotificationModel.js";
+import { removeTokenFromDatabase } from "../utils/tokenService.js";
 dotenv.config();
 
 // Create token
@@ -222,7 +223,7 @@ const loginUser = async (req, res) =>{
 
     // 4) Send FCM push notification if token exists
     if (user.fcmToken) {
-      const pushPayload = {
+      const payload = {
         title: `Welcome back, ${user.name}!`,
         body:  "You have successfully logged in into TOLI-TOLI. Check your dashboard for updates 😊",
         data: {
@@ -232,7 +233,7 @@ const loginUser = async (req, res) =>{
         },
       };
       try {
-        await sendPushNotification(user.fcmToken, pushPayload);
+        await sendPushNotification(user.fcmToken, payload);
       } catch (pushErr) {
         // Already logged in utility; here we just note it
         console.error("Login push failed:", pushErr.code || pushErr.message);
@@ -441,6 +442,26 @@ const updateFCMToken = async (req, res) => {
   }
 };
 
+const deleteFCMToken = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    const userId = req.user.id;
+    if (!fcmToken) {
+      return res.status(400).json({ success: false, message: 'FCM token is required' });
+    }
+    // Option A: Use your tokenService to batch-remove
+   // await removeTokenFromDatabase(fcmToken);
+    // Option B: Or simply unset the field on this user
+     await userModel.findByIdAndUpdate(userId, { $unset: { fcmToken: '' } });
+
+    return res.status(200).json({ success: true, message: 'FCM token removed' });
+  } catch (error) {
+    console.error('Error deleting FCM token:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
 export {
   registerUser,
   verifyOTP,
@@ -452,4 +473,5 @@ export {
   googleAuthFailure,
   placesApi,
   updateFCMToken,
+  deleteFCMToken,
 };

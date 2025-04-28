@@ -20,6 +20,7 @@ import {jwtDecode} from 'jwt-decode'
 import PropTypes from "prop-types";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import axiosInstance from "../../../axiosInstance";
+import { syncFcmToken } from "../NotificationSetup/NotificationSetup";
 
 const LoginForm = ({ setLogin }) => {
   const { url, setToken } = useContext(StoreContext);
@@ -64,10 +65,16 @@ const LoginForm = ({ setLogin }) => {
         withCredentials: true,
       });
       if (response.data.success) {
-        setToken(response.data.token);
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("fcmToken", response.data.token)
-        successTone.play();
+        const jwtToken = response.data.token;
+        setToken(jwtToken);
+        localStorage.setItem('token', jwtToken);
+        
+             try {
+                await syncFcmToken();
+               } catch (fcmErr) {
+                 console.warn('Login succeeded but FCM sync failed:', fcmErr.code || fcmErr.message);
+               }        
+               successTone.play();
         setLogin(false);
         toast.success(response.data.message);
 
