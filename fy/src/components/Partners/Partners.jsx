@@ -1,7 +1,10 @@
 import React from "react";
 import "./Partners.css";
+import { useNavigate } from "react-router-dom";
 
 const Partners = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="partners">
       <h2>Drive with TOLI-TOLI</h2>
@@ -14,8 +17,8 @@ const Partners = () => {
         On-Demand Transport: Your fast, on-demand ride, ready when you are.
 
         Smart Commutes: Ride smart with seamless booking and real-time tracking.<br/><br/>
-<button>Book Now</button>
-</p>
+      <button type="button" onClick={()=>navigate("/searchRides")} title="searchrides">Book Now</button>
+    </p>
         </div>
       </div>
 
