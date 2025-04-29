@@ -207,7 +207,7 @@ const loginDriver = async (req, res) => {
     // Find driver by email
     const driver = await DriverModel.findOne({ email });
     if (!driver) {
-      return res.status(401).json({ success: false, message: "Invalid credentials. Please register first." });
+      return res.status(401).json({ success: false, message: "Not authorized login. Please register first." });
     }
 
     // Check if the driver's account has been approved by admin
@@ -218,7 +218,7 @@ const loginDriver = async (req, res) => {
     // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, driver.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid credentials." });
+      return res.status(404).json({ success: false, message: "Invalid credentials." });
     }
 
     // Create JWT token (expires in 1 day)

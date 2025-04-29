@@ -25,6 +25,7 @@ const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
 
+
 // Register user
 const registerUser = async (req, res) => {
   const { name, password, email } = req.body;
@@ -187,7 +188,6 @@ const resendOTP = async (req, res) => {
   }
 };
 
-
 const loginUser = async (req, res) =>{
   const { email, password } = req.body;
 
@@ -205,7 +205,7 @@ const loginUser = async (req, res) =>{
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid email or password." });
+      return res.status(401).json({ success: false, message: "Incorrect credentials. Password mismatch." });
     }
 
     // 2) Generate JWT and send welcome email

@@ -106,8 +106,24 @@ const LoginForm = ({ setLogin }) => {
         toast.error(response.data.message);
       }
     } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.warn(error.response.data.message || "Incorrect credentials. Password mismatch.");
+      } else if (error.response && error.response.status === 400) {
+        toast.error(error.response.data.message || "Use Google login for this account.");
+      } else if (error.response && error.response.status === 403) {
+        toast.error(error.response.data.message || "Please verify your email to continue.");
+      } else if(error.response && error.response.status === 404) {
+        toast.error(error.response.data.message || "No account found with this email. Please register first.");
+      } else if (error.response && error.response.status === 500) {
+        toast.error(error.response.data.message || "Server down. Please try again later.");
+      } else if (error.code === "ERR_NETWORK") {
+        toast.warn("Network error. Please check your internet connection.");
+      } else if(error.code === "ERR_BAD_REQUEST") {
+        toast.error("Bad request. Please check your input.");
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
       console.error(error);
-      toast.error("Login failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

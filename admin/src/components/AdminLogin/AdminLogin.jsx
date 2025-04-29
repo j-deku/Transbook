@@ -89,8 +89,22 @@ const AdminLogin = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
+            if (error.response && error.response.status === 401) {
+              toast.warn(
+                error.response.data.message || "Not authorized login here."
+              );
+            } else if(error.response && error.response.status === 402) {
+                toast.error(error.response.data.message || "Invalid credentials. \n Password or email mismatch");
+              } else if(error.response && error.response.status ===500){
+                  toast.error(error.response.data.message || "Sever down. Please try again later.");
+              }else if (error.code === "ERR_NETWORK") {
+                  toast.warn("Network error. Please check your internet connection.");
+              } else if(error.code === "ERR_BAD_REQUEST") {
+                  toast.error("Bad request. Please check your input.");
+              }else {
+                  toast.error("An unexpected error occurred. Please try again.");
+              }
       console.error(error);
-      toast.error("Not authorized login");
     } finally {
       setIsSubmitting(false);
     }

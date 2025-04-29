@@ -4,7 +4,7 @@ const authMiddleware = async (req, res, next) => {
   // Expect token in Authorization header in the format "Bearer <token>"
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ success: false, message: "Not authorized. Please log in again." });
+    return res.status(401).json({ success: false, message: "Not authorized. Please log in." });
   }
 
   const token = authHeader.split(" ")[1];

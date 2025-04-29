@@ -86,7 +86,7 @@ const NotificationSetup = () => {
         });
       } catch (err) {
         setModalTitle('Subscription Failed');
-        setModalMessage('Unable to subscribe for push.');
+        setModalMessage('Unable to subscribe for this platform.');
         setModalOpen(true);
         console.error('❌ Push subscription error:', err);
         return;

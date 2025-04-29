@@ -70,13 +70,13 @@ const AdminLogin = async (req, res) => {
     // Find admin by email
     const admin = await AdminModel.findOne({ email });
     if (!admin) {
-      return res.status(401).json({ success: false, message: "Invalid credentials." });
+      return res.status(401).json({ success: false, message: "Not authorized login here." });
     }
     
     // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid credentials." });
+      return res.status(402).json({ success: false, message: "Invalid credentials. \n Password mismatch" });
     }
     
     // Create a JWT token (expires in 1 day)

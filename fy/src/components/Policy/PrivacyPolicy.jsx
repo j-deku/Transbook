@@ -6,11 +6,11 @@ import { FaInfo } from 'react-icons/fa'
 const Privacy_Policy = () => {
   return (
     <div className='policy'>
-      <p>
-        <u>
+          <u>
           <strong>Privacy Policy & Cookie Acceptance</strong><br /><br />
         </u>
-      At Balloon & Floral Decor, your privacy is our top priority. We value the trust you place in us to handle your personal information responsibly, whether you're browsing for floral arrangements, balloon designs, or making an inquiry.
+      <p>
+      At TOLI-TOLI, your privacy is our top priority. We value the trust you place in us to handle your personal information responsibly, whether you're browsing for transport booking, or making an inquiry.
 
 We use cookies to enhance your experience and ensure our website runs smoothly. Cookies help us remember your preferences and provide personalized content to make your visit as seamless as possible. Rest assured, any data collected is used only to improve your browsing experience, offer tailored suggestions, and help us serve you better.
 

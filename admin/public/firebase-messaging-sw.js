@@ -1,9 +1,9 @@
 /* public/firebase-messaging-sw.js */
-/* global workbox, importScripts, firebase */
+/* global workbox, importScripts,  firebase */
 
 // 1) Install & activate immediately
-self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
-self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+self.addEventListener('install', e => e.self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 
 // 2) Raw push listener: catches every push event
 self.addEventListener('push', event => {
@@ -18,15 +18,17 @@ self.addEventListener('push', event => {
     return;
   }
 
+  // Build notification title & body
   const title = data.data?.title || data.notification?.title || 'Notification';
   const body  = data.data?.body  || data.notification?.body  || '';
 
-  // Use absolute URL if provided, else prefix relative path with origin
-  let clickUrl = data.data?.url || self.location.origin;
+  // Normalize click URL to absolute origin
+  let clickUrl = data.data?.url || '/';
   if (clickUrl.startsWith('/')) {
     clickUrl = self.location.origin + clickUrl;
   }
 
+  // Show notification directly
   self.registration.showNotification(title, {
     body,
     icon: '/TT-logo-32x32.png',
@@ -65,15 +67,13 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// 5) onBackgroundMessage handler
+// 5) onBackgroundMessage handler (no event.waitUntil here)
 messaging.onBackgroundMessage(payload => {
   console.log('[SW] onBackgroundMessage:', payload);
 
   const title = payload.data?.title || payload.notification?.title || 'Notification';
   const body  = payload.data?.body  || payload.notification?.body  || '';
-
-  // Use absolute URL if provided
-  let clickUrl = payload.data?.url || self.location.origin;
+  let clickUrl = payload.data?.url || '/';
   if (clickUrl.startsWith('/')) {
     clickUrl = self.location.origin + clickUrl;
   }
@@ -91,9 +91,9 @@ messaging.onBackgroundMessage(payload => {
     vibrate: [200, 100, 200]
   });
 
-  // Inform clients to play sound
+  // inform clients to play sound
   self.clients.matchAll({ includeUncontrolled: true, type: 'window' })
-    .then(clients => clients.forEach(client => client.postMessage({ type: 'PLAY_SOUND', payload })));
+    .then(clients => clients.forEach(c => c.postMessage({ type: 'PLAY_SOUND', payload })));
 });
 
 // 6) Notification click handler

@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     resetToken: String,  // Stores the reset token
     resetTokenExpires: Date, // Expiration time for reset token
+    refreshTokens: [{
+      token:       { type: String, required: true },
+      createdAt:   { type: Date,   default: Date.now },
+      revoked:     { type: Boolean, default: false },
+      expiresAt:   { type: Date },
+    }],  
     // Role field differentiates regular users
     role: { 
       type: String, 

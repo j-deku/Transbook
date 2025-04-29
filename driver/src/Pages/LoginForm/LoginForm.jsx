@@ -95,11 +95,18 @@ const LoginForm = () => {
         toast.warn(
           error.response.data.message || "Your account is pending admin approval."
         );
-      } else {
-        if(error.response && error.response.status === 401) {
-          toast.error(error.response.data.message || "Login failed. Please try again.");
-        }
-      }
+      } else if(error.response && error.response.status === 401) {
+          toast.error(error.response.data.message || "Not authorized login. Please register first.");
+        } else if(error.response && error.response.status === 404) {
+            toast.error(error.response.data.message || "Invalid credentials. \n Password mismatch");
+          } else if(error.response && error.response.status === 500){
+              toast.error(error.response.data.message || "Server down. Please try again later.");
+            } else if (error.code === "ERR_NETWORK") {
+              toast.error("Network error. Please check your connection.");
+            } else {
+              toast.error("An unexpected error occurred. Please try again.");
+            }
+
       console.error(error);
     } finally {
       setIsSubmitting(false);
