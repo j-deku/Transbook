@@ -376,6 +376,46 @@ const googleAuthCallback = async (req, res) => {
         avatar
       )}`
     );
+
+    // Send push notification
+    if (user.fcmToken) {
+      const payload = {
+        title: `Welcome back, ${user.name}!`,
+        body: "You have successfully logged in into TOLI-TOLI. Check your dashboard for updates 😊",
+        data: {
+          type: "login",
+          tag: "login",
+          url: "/myBookings",
+        },
+      };
+      try {
+        await sendPushNotification(user.fcmToken, payload);
+      } catch (pushErr) {
+        console.error("Login push failed:", pushErr.code || pushErr.message);
+      }
+    } else {
+      console.warn("No FCM token for user; push not sent.");
+    }
+
+    const notificationMessage = `Hi ${user.name}! Welcome back to TOLI-TOLI.`;
+    await Notification.create({
+      userId: user._id,
+      message: notificationMessage,
+      type: "login",
+      isRead: false,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
+
   } catch (error) {
     console.error("Error during Google authentication:", error.message);
 
