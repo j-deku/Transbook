@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Route, Routes } from 'react-router-dom'
@@ -30,10 +30,12 @@ import BookingDashboard from './Pages/BookingDashboard/BookingDashboard'
 import UserSocketProvider from '../Provider/UserSocketProvider'
 import NotificationSetup from './components/NotificationSetup/NotificationSetup'
 import TrackRide from './Pages/TrackRide/TrackRide'
+import { StoreContext } from './context/StoreContext'
 
 const App = () => {
   const [login, setLogin] = useState(false)
   const [isLoading, setIsLoading] = useState(() => !sessionStorage.getItem('assetsLoaded'))
+  const { token } = useContext(StoreContext)
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -64,7 +66,7 @@ const App = () => {
     <div>
       <UserSocketProvider>
         <ToastContainer position="top-left" />
-        <NotificationSetup />
+        {token && <NotificationSetup />} 
         {login && <Forms setLogin={setLogin} />}
         <div className="app">
           <Navbar setLogin={setLogin} />

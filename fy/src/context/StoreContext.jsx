@@ -1,6 +1,7 @@
 // src/context/StoreContext.jsx
 import React, { createContext, useEffect, useState, useCallback } from "react";
 import PropTypes from 'prop-types';
+import { useMemo } from "react";
 
 export const StoreContext = createContext(null);
 
@@ -14,7 +15,6 @@ const StoreContextProvider = ({ children }) => {
   const url = import.meta.env.VITE_API_BASE_URL;
   const [token, setToken] = useState("");
   const [cookie, setCookie] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState(null);
   const [searchData, setSearchData] = useState(null);
 
@@ -36,7 +36,9 @@ const StoreContextProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
+    localStorage.removeItem('fcmToken');
+    localStorage.removeItem('selectedRides');
+    localStorage.removeItem('userId');
     // Notify subscribers
     logoutListeners.forEach(fn => {
       try { fn(); } catch (e) { console.error('Logout listener error:', e); }
@@ -66,6 +68,8 @@ const StoreContextProvider = ({ children }) => {
       const userData = { name, email, avatar };
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
+
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
@@ -74,7 +78,7 @@ const StoreContextProvider = ({ children }) => {
     localStorage.setItem("selectedRides", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const ContextValue = {
+  const ContextValue = useMemo(() => ({
     cartItems,
     setCartItems,
     url,
@@ -82,19 +86,26 @@ const StoreContextProvider = ({ children }) => {
     setToken,
     cookie,
     setCookie,
-    searchTerm,
-    setSearchTerm,
     user,
     setUser,
     searchData,
     setSearchData,
-    // Logout API: call to clear and notify
     logout: {
       exec: logout,
       subscribe: subscribeLogout,
       unsubscribe: unsubscribeLogout,
     },
-  };
+  }), [
+    cartItems,
+    url,
+    token,
+    cookie,
+    user,
+    searchData,
+    logout,
+    subscribeLogout,
+    unsubscribeLogout,
+  ]);
 
   return (
     <StoreContext.Provider value={ContextValue}>

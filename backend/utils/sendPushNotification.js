@@ -31,6 +31,7 @@ export async function sendPushNotification(fcmToken, payload) {
   try {
     const messageId = await admin.messaging().send(message);
     logger.info("FCM message sent", { messageId, fcmToken });
+    console.log("FCM message sent", { messageId, fcmToken });
     return messageId;
   } catch (err) {
     logger.error("FCM send error", { code: err.code, message: err.message });

@@ -46,12 +46,14 @@ export async function syncFcmToken() {
 
 const NotificationSetup = () => {
   const theme = useTheme();
-  const { logout } = useContext(StoreContext); // assume logout clears token
+  const { logout, token } = useContext(StoreContext); // grab auth token
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
+    if (!token) return;    // skip subscription when logged out
+
     let unsubscribeMessage;
 
     (async () => {
@@ -122,18 +124,18 @@ const NotificationSetup = () => {
       window.removeEventListener('focus', syncFcmToken);
       window.removeEventListener('storage', syncFcmToken);
     };
-  }, []);
+  }, [token]);
 
   // Unsubscribe on logout
   useEffect(() => {
     const handleLogout = async () => {
-      const token = localStorage.getItem('fcmToken');
-      if (token) {
+      const fcmToken = localStorage.getItem('fcmToken');
+      if (fcmToken) {
         try {
-          await messaging.deleteToken(token);
+          await messaging.deleteToken(fcmToken);
           await axiosInstance.post(
             `${import.meta.env.VITE_API_BASE_URL}/api/user/remove-token`,
-            { fcmToken: token },
+            { fcmToken },
             { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
           );
         } catch (err) {
