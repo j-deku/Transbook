@@ -20,7 +20,7 @@ import StoreContextProvider, { StoreContext } from './context/StoreContext.jsx';
     }
   }
   
-  const IDLE_TIMEOUT = 5 * 60 * 1000; 
+  const IDLE_TIMEOUT = 10 * 60 * 1000; 
 
   function Root() {
     const { logout } = useContext(StoreContext);
