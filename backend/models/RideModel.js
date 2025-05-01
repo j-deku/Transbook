@@ -1,10 +1,19 @@
 import mongoose from "mongoose";
 
-// Utility function to calculate the distance between two coordinates (in kilometers)
+// Utility: strip accents and lowercase
+function stripAccents(s = "") {
+  return s
+    .normalize("NFD")                   // decompose accents
+    .replace(/[\u0300-\u036f]/g, "")    // remove diacritical marks
+    .toLowerCase()                      // lowercase for uniformity
+    .trim();                            // trim whitespace
+}
+
+// Distance helper (km)
 function calculateDistance(coords1, coords2) {
   const [lon1, lat1] = coords1;
   const [lon2, lat2] = coords2;
-  const R = 6371; // Earth's radius in kilometers
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -18,22 +27,27 @@ function calculateDistance(coords1, coords2) {
 
 const RideSchema = new mongoose.Schema(
   {
-    pickup: { type: String, required: true, trim: true},
-    destination: { type: String, required: true, trim: true},
-    price: { type: Number, required: true },
+    // --- Original fields ---
+    pickup:      { type: String, required: true, trim: true },
+    destination: { type: String, required: true, trim: true },
+    price:       { type: Number, required: true },
     description: { type: String, required: true },
-    selectedDate: { type: Date, required: true },
-    selectedTime: { type: String, required: true }, // Start time in "HH:mm" format
-    passengers: { type: Number, required: true, min: 1 },
-    imageUrl: { type: String },
-    type: { type: String, required: true },
+    selectedDate:{ type: Date,   required: true },
+    selectedTime:{ type: String, required: true },
+    passengers:  { type: Number, required: true, min: 1 },
+    imageUrl:    { type: String },
+    type:        { type: String, required: true },
     status: {
       type: String,
-      enum: ["pending approval", "approved", "partially approved", "declined", "scheduled", "assigned", "in progress", "completed"],
+      enum: [
+        "pending approval","approved","partially approved","declined",
+        "scheduled","assigned","in progress","completed"
+      ],
       default: "scheduled",
     },
     driver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
-    // Geo-coordinates for spatial queries
+
+    // --- Geospatial fields ---
     pickupLocation: {
       type: { type: String, enum: ["Point"], default: "Point" },
       coordinates: { type: [Number], index: "2dsphere" },
@@ -42,77 +56,63 @@ const RideSchema = new mongoose.Schema(
       type: { type: String, enum: ["Point"], default: "Point" },
       coordinates: { type: [Number], index: "2dsphere" },
     },
+
+    // --- Computed ---
     distance: { type: Number },
-    duration: { type: String }, // Duration in "HH:mm" format
-    // New field: an array to store fare history entries for auditing
+    duration: { type: String },
+
+    // --- Audit trail ---
     fareHistory: [
       {
         previousFare: { type: Number },
-        updatedFare: { type: Number },
+        updatedFare:  { type: Number },
         calculatedExpectedFare: { type: Number },
-        updatedAt: { type: Date, default: Date.now },
+        updatedAt:    { type: Date, default: Date.now },
       },
     ],
+
+    // --- Normalized for accent- and case-insensitive search (required!) ---
+    pickupNorm:      { type: String, required: true, index: true },
+    destinationNorm: { type: String, required: true, index: true },
   },
   { timestamps: true }
 );
 
-// Pre-save hook to calculate distance and duration based on coordinates
+// ── 1) Populate normalized fields before validation ────────────────────────────
+RideSchema.pre("validate", function (next) {
+  this.pickupNorm      = stripAccents(this.pickup);
+  this.destinationNorm = stripAccents(this.destination);
+  next();
+});
+
+// ── 2) Calculate distance & duration before saving ────────────────────────────
 RideSchema.pre("save", function (next) {
   if (
-    this.pickupLocation &&
-    Array.isArray(this.pickupLocation.coordinates) &&
-    this.pickupLocation.coordinates.length === 2 &&
-    this.destinationLocation &&
-    Array.isArray(this.destinationLocation.coordinates) &&
-    this.destinationLocation.coordinates.length === 2
+    this.pickupLocation?.coordinates?.length === 2 &&
+    this.destinationLocation?.coordinates?.length === 2
   ) {
-    // Calculate distance
     this.distance = calculateDistance(
       this.pickupLocation.coordinates,
       this.destinationLocation.coordinates
     );
-    // Compute duration based on an assumed average speed (e.g., 40 km/h)
-    const avgSpeed = 40; // km per hour
-    const totalMinutes = Math.round((this.distance / avgSpeed) * 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    // Format as "HH:mm"
-    this.duration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    const avgSpeed = 40; // km/h
+    const totalMin = Math.round((this.distance / avgSpeed) * 60);
+    const hrs = Math.floor(totalMin / 60);
+    const mins = totalMin % 60;
+    this.duration = `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
   }
   next();
 });
 
-/**
- * Instance method to calculate the expected fare based on:
- *  - baseFare: Flat starting charge.
- *  - ratePerMile: Additional charge per kilometer (or mile).
- *  - ratePerMinute: Additional charge per minute (estimated from distance/average speed).
- *  - surgeMultiplier: Optional multiplier for surge pricing.
- */
+// ── 3) Expected fare helper ──────────────────────────────────────────────────
 RideSchema.methods.calculateExpectedFare = function (
-  baseFare,
-  ratePerMile,
-  ratePerMinute,
-  surgeMultiplier = 1
+  baseFare, ratePerMile, ratePerMinute, surgeMultiplier = 1
 ) {
-  // Use the ride's pre-calculated distance; if not available, default to 0
-  const distance = this.distance || 0;
-  // Assume an average speed to estimate duration in minutes (for instance, 40 km/h)
-  const avgSpeed = 40; // km/h
-  const estimatedTimeMinutes = (distance / avgSpeed) * 60;
-  
-  const fareWithoutSurge = baseFare + (distance * ratePerMile) + (estimatedTimeMinutes * ratePerMinute);
-  return fareWithoutSurge * surgeMultiplier;
+  const dist = this.distance || 0;
+  const avgSpeed = 40;
+  const estMinutes = (dist / avgSpeed) * 60;
+  const fareNoSurge = baseFare + dist * ratePerMile + estMinutes * ratePerMinute;
+  return fareNoSurge * surgeMultiplier;
 };
 
-// text fields: accent- and case-insensitive via collation
-RideSchema.index({ pickup: 1 }, { collation: { locale: "en", strength: 1 } });
-RideSchema.index({ destination: 1 }, { collation: { locale: "en", strength: 1 } });
-
-// geospatial index for $near queries
-RideSchema.index({ pickupLocation: "2dsphere" });
-RideSchema.index({ destinationLocation: "2dsphere" });
-
-const RideModel = mongoose.models.ride || mongoose.model("ride", RideSchema);
-export default RideModel;
+export default mongoose.models.Ride || mongoose.model("Ride", RideSchema);

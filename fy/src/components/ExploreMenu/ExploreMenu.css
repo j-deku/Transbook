@@ -195,3 +195,45 @@ button:hover {
 .exchange-icon:hover {
   transform: rotate(90deg);
 }
+/* Style for the input */
+.date .date-picker-input {
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.date .date-picker-input:focus {
+  border-color: #0077cc;
+  box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.2);
+}
+
+/* Calendar dropdown */
+.date .custom-calendar {
+  font-family: 'Poppins', sans-serif;
+  background: #fff;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-size: 20px;
+  outline: none;
+  color: #333;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.date .react-datepicker__header {
+  background-color: #f0f8ff;
+  border-bottom: 1px solid #ccc;
+  padding: 30px;
+  gap: 120px;
+  text-align: center;
+}
+
+.date .react-datepicker__day--selected,
+.date .react-datepicker__day--keyboard-selected {
+  background-color: #0077cc;
+  color: white;
+}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import { useContext, useState, useEffect, useCallback } from 'react';
 import './ExploreMenu.css';
 import { Box } from '@mui/material';
 import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
@@ -148,7 +148,7 @@ const ExploreMenu = () => {
             )}
           </div>
           {/* Swap Icon */}
-          <div className="exchange-icon" onClick={handleSwap}><FaExchangeAlt /></div>
+          <div className="exchange-icon" onClick={handleSwap}><FaExchangeAlt style={{marginTop:"20px"}}/></div>
           {/* Destination Input */}
           <div className="form-group destination">
             <label>Destination <FaLocationArrow /></label>
@@ -178,16 +178,24 @@ const ExploreMenu = () => {
           {/* Date Picker */}
           <div className="form-group date">
             <label>Preferred Date <FaCalendar /></label>
-            <DatePicker
-              selected={selectedDate}
-              onChange={setSelectedDate}
-              showTimeSelect
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText='May 1, 2025 12:00 AM'
-              required
-              minDate={new Date()}
-              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
-            />
+           <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            placeholderText="Select a date"
+            className="date-picker-input"
+            calendarClassName="custom-calendar"
+            dateFormatCalendar="MMMM yyyy"
+            todayButton="Today"
+            isClearable
+            showPopperArrow={false}
+            required
+            showMonthDropdown
+            dropdownMode="select"
+            minDate={new Date()}
+            maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
+            timeIntervals={30}
+            dateFormat="MMMM d, yyyy"
+          />
           </div>
           {/* Passengers */}
           <div className="form-group passengers">

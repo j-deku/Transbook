@@ -375,7 +375,6 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
 // In your addRide function:
 const addRide = async (req, res) => {
   try {
@@ -383,42 +382,43 @@ const addRide = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required" });
     }
 
-    // Geocode the pickup and destination addresses
-    let pickupCoords, destinationCoords;
-    try {
-      pickupCoords = await geocodeAddress(req.body.pickup);
-      destinationCoords = await geocodeAddress(req.body.destination);
-    } catch (geoError) {
-      return res.status(400).json({ success: false, message: geoError.message });
-    }
+    // 1) Geocode addresses
+    const pickupCoords = await geocodeAddress(req.body.pickup);
+    const destCoords   = await geocodeAddress(req.body.destination);
 
+    // 2) Instantiate (pre-validate hook will fill normalized fields)
     const ride = new RideModel({
       pickup: req.body.pickup,
       destination: req.body.destination,
-      price: req.body.price,
+      price: Number(req.body.price),
       description: req.body.description,
-      selectedDate: req.body.selectedDate, // e.g., "2025-02-07"
-      selectedTime: req.body.selectedTime,   // e.g., "14:30"
-      passengers: req.body.passengers,
-      imageUrl: req.file.path,               // Cloudinary or local URL
+      selectedDate: new Date(req.body.selectedDate),
+      selectedTime: req.body.selectedTime,
+      passengers: Number(req.body.passengers),
+      imageUrl: req.file.path,
       type: req.body.type,
       status: req.body.status || "scheduled",
-      driver: req.driver._id,           // <—— here!
-      // Store coordinates as GeoJSON Points
+      driver: req.driver._id,
       pickupLocation: {
         type: "Point",
         coordinates: [pickupCoords.longitude, pickupCoords.latitude],
       },
       destinationLocation: {
         type: "Point",
-        coordinates: [destinationCoords.longitude, destinationCoords.latitude],
+        coordinates: [destCoords.longitude, destCoords.latitude],
       },
     });
 
+    // 3) Save (triggers validate → normalize → save)
     await ride.save();
     return res.json({ success: true, message: "Ride added successfully", ride });
+
   } catch (error) {
     console.error("Error in addRide:", error);
+    if (error.name === "ValidationError") {
+      const msgs = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({ success: false, message: msgs.join("; ") });
+    }
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

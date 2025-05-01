@@ -32,7 +32,13 @@
  border-radius: 30px;
  background-color: #124a83;
 }
-
+.passenger-input{
+    display: flex;
+}
+.passenger-input input{
+    width: 50%;
+    margin: 0 10px;
+}
 @media (max-width:750px) {
     .available-search{
         display: block;
