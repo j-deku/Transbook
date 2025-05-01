@@ -21,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
     req.body.userId = decoded.id; // if your token has an 'id' property
     next();
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
+    if (error.name === "TokenExpiredError" || error.name === "JsonWebTokenError" || error.name === "NotBeforeError") {
       return res.status(401).json({ success: false, message: "Token expired. Please log in again." });
     }
     console.error("Authentication error:", error);

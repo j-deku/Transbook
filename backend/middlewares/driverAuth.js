@@ -25,9 +25,10 @@ const driverAuth = async (req, res, next) => {
     req.driver = driver;
     next();
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
+    if (error.name === "TokenExpiredError" || error.name === "JsonWebTokenError" || error.name === "NotBeforeError") {
       return res.status(401).json({ success: false, message: "Token expired. Please log in again." });
     }
+
     console.error("Driver authentication error:", error);
     return res.status(500).json({ success: false, message: "Authentication error." });
   }
