@@ -70,7 +70,7 @@ const App = () => {
         <Route path="/driver/edit-fare/:rideId" element={<PrivateRoute><EditFare /></PrivateRoute>} />
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/reset-password/:token" element={<PasswordReset/>}/>
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer/>
     </div>
