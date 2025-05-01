@@ -41,7 +41,7 @@ const CurrentRideApproved = () => {
   if (!currentRide) {
     return (
       <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
-        <Typography variant="body1">No current ride available.</Typography>
+        <Typography variant="body1"><Skeleton/></Typography>
       </Box>
     );
   }

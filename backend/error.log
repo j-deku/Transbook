@@ -23,3 +23,4 @@
 {"code":"messaging/third-party-auth-error","level":"error","message":"FCM send error Auth error from APNS or Web Push Service"}
 {"code":"messaging/third-party-auth-error","level":"error","message":"FCM send error Auth error from APNS or Web Push Service"}
 {"code":"messaging/third-party-auth-error","level":"error","message":"FCM send error Auth error from APNS or Web Push Service"}
+{"code":"messaging/registration-token-not-registered","level":"error","message":"FCM send error Requested entity was not found."}

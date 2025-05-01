@@ -37,7 +37,6 @@ const CurrentRideOverview = () => {
         setCurrentRide(response.data.rides[0]);
       } else {
         setCurrentRide(null);
-        toast.info(response.data.message || "No active ride found");
       }
     } catch (error) {
       console.error("Error fetching current ride:", error.response?.data || error.message);

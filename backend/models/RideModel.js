@@ -18,8 +18,8 @@ function calculateDistance(coords1, coords2) {
 
 const RideSchema = new mongoose.Schema(
   {
-    pickup: { type: String, required: true },
-    destination: { type: String, required: true },
+    pickup: { type: String, required: true, trim: true},
+    destination: { type: String, required: true, trim: true},
     price: { type: Number, required: true },
     description: { type: String, required: true },
     selectedDate: { type: Date, required: true },
@@ -105,6 +105,14 @@ RideSchema.methods.calculateExpectedFare = function (
   const fareWithoutSurge = baseFare + (distance * ratePerMile) + (estimatedTimeMinutes * ratePerMinute);
   return fareWithoutSurge * surgeMultiplier;
 };
+
+// text fields: accent- and case-insensitive via collation
+RideSchema.index({ pickup: 1 }, { collation: { locale: "en", strength: 1 } });
+RideSchema.index({ destination: 1 }, { collation: { locale: "en", strength: 1 } });
+
+// geospatial index for $near queries
+RideSchema.index({ pickupLocation: "2dsphere" });
+RideSchema.index({ destinationLocation: "2dsphere" });
 
 const RideModel = mongoose.models.ride || mongoose.model("ride", RideSchema);
 export default RideModel;

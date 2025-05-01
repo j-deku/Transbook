@@ -44,30 +44,90 @@ const getDriverRides = async (req, res) => {
   }
 };
 
-/**
- * GET /api/driver/rides/:id
- * Returns a specific ride (by its ID) only if it is assigned to the authenticated driver.
- */
-const RidesById = async (req, res) => {
+// at top with your other imports:
+const getRideById = async (req, res) => {
   try {
-    const driver = req.driver;
-    if (!driver) {
-      return res.status(403).json({ message: "Access denied: Not a driver." });
-    }
-    const ride = await RideModel.findById(req.params.id);
+    const ride = await RideModel.findById(req.params.id)
+      .select("-__v");   // exclude internal fields
     if (!ride) {
-      return res.status(404).json({ message: "Ride not found." });
+      return res.status(404).json({ success: false, message: "Ride not found" });
     }
-    if (ride.driver.toString() !== driver._id.toString()) {
-      return res.status(403).json({ message: "You are not authorized to view this ride." });
+    // ensure it belongs to this driver:
+    if (ride.driver.toString() !== req.driver._id.toString()) {
+      return res.status(403).json({ success: false, message: "Unauthorized" });
     }
-    return res.json({ ride });
-  } catch (error) {
-    console.error("Error fetching ride details:", error);
-    return res.status(500).json({ message: "Server error" });
+    return res.json({ success: true, ride });
+  } catch (err) {
+    console.error("Error in getRideById:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+const updateRide = async (req, res) => {
+  try {
+    const rideId = req.params.id;
+
+    // 1. Find the ride and ensure it belongs to this driver
+    const ride = await RideModel.findById(rideId);
+    if (!ride) {
+      return res.status(404).json({ success: false, message: "Ride not found" });
+    }
+    if (ride.driver.toString() !== req.driver._id.toString()) {
+      return res.status(403).json({ success: false, message: "Not authorized to edit this ride" });
+    }
+
+    // 2. If you allow updating the image:
+    if (req.file) {
+      ride.imageUrl = req.file.path;
+    }
+
+    // 3. Update allowed fields
+    const allowedUpdates = [
+      "pickup",
+      "destination",
+      "price",
+      "description",
+      "selectedDate",
+      "selectedTime",
+      "passengers",
+      "type",
+      "status",
+    ];
+    allowedUpdates.forEach(field => {
+      if (req.body[field] !== undefined) {
+        ride[field] = req.body[field];
+      }
+    });
+
+    // 4. (Optional) Re-geocode if pickup or destination changed
+    if (req.body.pickup || req.body.destination) {
+      const [newPickup, newDest] = await Promise.all([
+        req.body.pickup ? geocodeAddress(req.body.pickup) : null,
+        req.body.destination ? geocodeAddress(req.body.destination) : null,
+      ]);
+      if (newPickup) {
+        ride.pickupLocation = {
+          type: "Point",
+          coordinates: [newPickup.longitude, newPickup.latitude],
+        };
+      }
+      if (newDest) {
+        ride.destinationLocation = {
+          type: "Point",
+          coordinates: [newDest.longitude, newDest.latitude],
+        };
+      }
+    }
+
+    // 5. Save and return the updated ride
+    await ride.save();
+    return res.json({ success: true, message: "Ride updated successfully", ride });
+
+  } catch (error) {
+    console.error("Error in updateRide:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
 /**
  * POST /api/driver/ride/status
  * Allows the driver to update the status of an assigned ride.
@@ -214,11 +274,10 @@ const loginDriver = async (req, res) => {
     if (!driver.approved) {
       return res.status(403).json({ success: false, message: "Your account is pending admin approval." });
     }
-
     // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, driver.password);
     if (!isMatch) {
-      return res.status(404).json({ success: false, message: "Invalid credentials." });
+      return res.status(404).json({ success: false, message: "Password mismatch. Input the right password" });
     }
 
     // Create JWT token (expires in 1 day)
@@ -938,7 +997,8 @@ const getPendingRideRequests = async (req, res) => {
 
 export { 
   getDriverRides, 
-  RidesById, 
+  getRideById,
+  updateRide,
   updateRideStatusDriver, 
   updateDriverProfile, 
   registerDriver, 

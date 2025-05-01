@@ -95,7 +95,7 @@ const Add = () => {
             onChange={onChangeHandler}
             value={data.pickup}
             type="text"
-            placeholder="Paris, France"
+            placeholder="Pickup Location"
             name="pickup"
             required
           />
@@ -107,7 +107,7 @@ const Add = () => {
             onChange={onChangeHandler}
             value={data.destination}
             type="text"
-            placeholder="Lille, France"
+            placeholder="Destination"
             name="destination"
             required
           />

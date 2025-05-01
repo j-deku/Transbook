@@ -7,10 +7,19 @@ const SearchArchive = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedArchives = localStorage.getItem("searchArchives");
-    if (storedArchives) {
+    const stored = localStorage.getItem("searchArchives");
+    if (stored) {
       try {
-        setArchives(JSON.parse(storedArchives));
+        const allArchives = JSON.parse(stored);
+        // Only include searches with selectedDate today or in the future
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const upcoming = allArchives.filter((archive) => {
+          const date = new Date(archive.selectedDate);
+          date.setHours(0, 0, 0, 0);
+          return date >= today;
+        });
+        setArchives(upcoming);
       } catch (error) {
         console.error("Error parsing search archives:", error);
       }
@@ -22,16 +31,18 @@ const SearchArchive = () => {
   };
 
   if (archives.length === 0) {
-    return <p className="archive-empty">No previous searches found.</p>;
+    return <p className="archive-empty">No upcoming searches found.</p>;
   }
 
   return (
     <div className="search-archive">
-      <h3>Previous Searches</h3>
+      <h3>Upcoming Searches</h3>
       <ul>
         {archives.map((archive, index) => (
           <li key={index} onClick={() => handleArchiveClick(archive)}>
-            <span className="search-date">{new Date(archive.selectedDate).toLocaleDateString()}</span>
+            <span className="search-date">
+              {new Date(archive.selectedDate).toLocaleDateString()}
+            </span>
             <span className="search-info">
               {archive.pickup} &rarr; {archive.destination} ({archive.passengers} Passenger{archive.passengers > 1 ? "s" : ""})
             </span>

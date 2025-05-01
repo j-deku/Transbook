@@ -92,11 +92,9 @@ const LoginForm = () => {
     } catch (error) {
       // Check if error is due to pending admin approval (status code 403)
       if (error.response && error.response.status === 403) {
-        toast.warn(
-          error.response.data.message || "Your account is pending admin approval."
-        );
+        toast.warn(error.response.data.message || "Your account is pending admin approval.", {autoClose: 5000});
       } else if(error.response && error.response.status === 401) {
-          toast.error(error.response.data.message || "Not authorized login. Please register first.");
+          toast.warn(error.response.data.message || "Not authorized login. Please register first.");
         } else if(error.response && error.response.status === 404) {
             toast.error(error.response.data.message || "Invalid credentials. \n Password mismatch");
           } else if(error.response && error.response.status === 500){

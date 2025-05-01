@@ -82,6 +82,7 @@ const ExploreMenu = () => {
         archives = JSON.parse(storedArchives);
       } catch (err) {
         archives = [];
+        console.error('Error parsing search archives:', err);
       }
     }
     archives.unshift(searchData);

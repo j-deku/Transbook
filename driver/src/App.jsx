@@ -19,6 +19,7 @@ import FormSubmitted from './Pages/FormSubmitted/FormSubmitted'
 import CreateRide from './Pages/CreateRide/CreateRide'
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import PasswordReset from './components/PasswordReset/PasswordReset'
+import EditRide from './Pages/EditRide/EditRide'
 
 const App = () => {
   const PrivateRoute = ({ children }) => {
@@ -60,6 +61,7 @@ const App = () => {
         <Route path="/form-submitted" element={<PrivateSuccessRoute><FormSubmitted/></PrivateSuccessRoute>}/>
         <Route path="/register" element={<RegisForm/>} />
         <Route path="/create-ride" element={<CreateRide/>}/>
+        <Route path="/driver/edit-ride/:rideId" element={<PrivateRoute><EditRide/></PrivateRoute>}/>
         <Route path='/dashboard' element={<PrivateRoute><Home/></PrivateRoute>}/>
         <Route path='/history' element={<PrivateRoute><History/></PrivateRoute>}/>
         <Route path='/earnings' element={<PrivateRoute><Earnings/></PrivateRoute>}/>
