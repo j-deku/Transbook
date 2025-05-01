@@ -4,7 +4,7 @@
     margin: 30px;
     color: #fff;
     background-color: #3c3b52;
-    padding: 20px;
+    padding: 20px 40px;
     border-radius: 20px;
     box-shadow: 5px 5px 5px #c2c1c1;
 }
@@ -26,7 +26,7 @@
 
 .search-form input {
     font-weight: 400;
-    padding: 8px;
+    padding: 8px 20px;
     border-radius: 5px;
     outline: 1px solid gray;
     background-color: transparent;

@@ -90,7 +90,8 @@ const CreateRide = () => {
             selectProps={{
               value: data.pickup ? { label: data.pickup, value: data.pickup } : null,
               onChange: (val) => handlePlaceChange(val, 'pickup'),
-              placeholder: 'Enter pickup location'
+              placeholder: 'Enter pickup location',
+              required: true
             }}
           />
         </div>
@@ -102,7 +103,8 @@ const CreateRide = () => {
             selectProps={{
               value: data.destination ? { label: data.destination, value: data.destination } : null,
               onChange: (val) => handlePlaceChange(val, 'destination'),
-              placeholder: 'Enter destination'
+              placeholder: 'Enter destination',
+              required: true
             }}
           />
         </div>
