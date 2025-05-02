@@ -33,7 +33,7 @@ const RideSchema = new mongoose.Schema(
     type: { type: String, required: true },
     status: { 
       type: String, 
-      enum: ["pending approval", "approved", "declined", "assigned", "completed"],
+      enum: ["pending approval", "scheduled", "approved", "declined", "assigned", "in progress", "completed"],
       default: "pending approval" 
     },
     driver: { type: String, required: true }

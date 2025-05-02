@@ -15,7 +15,6 @@
     grid-template-columns: 0.5fr 2fr 1fr 1fr 2fr 1fr;
     align-items: center;
     gap: 30px;
-    font-size: max(1.5vw,14px);
     padding: 10px 20px;
     color: #454545;
     border: 1px solid rebeccapurple ;
@@ -30,6 +29,9 @@
     width: 60px;
     height: 60px;
 }
+.my-bookings-booking p{
+    font-size: max(1.2vw, 12px);
+}
 .my-bookings-booking p span{
     color: blue;
 }
@@ -39,7 +41,7 @@
 }
 .my-bookings-booking button{
     border: none;
-    padding: 12px 0px;
+    padding: 12px 5px;
     border-radius: 4px;
     background-color: rgb(102, 51, 153, 0.2);
     cursor: pointer;
@@ -51,8 +53,16 @@
 }
 @media (max-width:900px) {
     .my-bookings-booking{
-        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         row-gap: 5px;
+        font-size: 10px;
+    }
+    .my-bookings-booking img{
+        width: 50px;
+        height: 50px;
+    }
+    .my-bookings-booking button{
+        padding: 10px 5px;
         font-size: 10px;
     }
 }

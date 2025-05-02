@@ -47,7 +47,7 @@ const MyBookings = () => {
                 ))}
               </p>
               <p>${booking.amount}.00</p>
-              <p>Items: {rides.length}</p>
+              <p><strong>Rides:</strong> {rides.length}</p>
               <p>
                 <span>&#x25cf;</span> <b>{booking.status}</b>
               </p>

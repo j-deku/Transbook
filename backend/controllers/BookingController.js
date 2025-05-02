@@ -9,7 +9,7 @@ const paystack = new Paystack(process.env.PAYSTACK_SECRET_KEY)
 
 //placing user order for frontend 
 const placeBookings = async (req, res) => {
-    const frontend_url ="http://localhost:5173";
+    const frontend_url = process.env.FRONTEND_URL || "http://localhost:5173";
   
     if (!req.body.userId || !req.body.rides || !req.body.amount || !req.body.address) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
