@@ -30,8 +30,8 @@ import passport from "./config/passport.js";
 import { connectDB } from "./config/Db.js";
 import { ensureSuperAdminExists } from "./controllers/AdminController.js";
 import copyDatabase from "./utils/copyDatabase.js";
-
-import "dotenv/config.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 // ── ESM __dirname Derivation ───────────────────────────────────────────────────
 const __filename = fileURLToPath(import.meta.url);

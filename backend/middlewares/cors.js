@@ -3,35 +3,21 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.ADMIN_URL,
-  process.env.DRIVER_URL,
-];
-
-// Filter out undefined or empty URLs
-const filteredOrigins = allowedOrigins.filter(Boolean);
+const allowed = [ process.env.FRONTEND_URL, process.env.ADMIN_URL, process.env.DRIVER_URL ].filter(Boolean);
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-
-    if (filteredOrigins.includes(origin)) {
-      return callback(null, true);
+  origin(origin, callback) {
+    if (!origin || allowed.includes(origin)) {
+      console.log(`CORS allowed for origin: ${origin}`);
+      callback(null, true);
     } else {
-      return callback(
-        new Error(`Not allowed by CORS: origin ${origin}`),
-        false
-      );
+      console.warn(`CORS denied for origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'), false);
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Authorization'], // Optional
-  optionsSuccessStatus: 200,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],           // preflight methods
+  allowedHeaders: ['Content-Type','Authorization'],                  // allow your auth header
+  credentials: true,                                                 // enable cookies/credentials
 };
-
 const corsMiddleware = cors(corsOptions);
 export default corsMiddleware;
