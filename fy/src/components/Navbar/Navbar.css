@@ -335,6 +335,10 @@ p.profileName{
     .navbar-right .person-icon{
         margin-right: 60px;
     }
+    .navbar-right .profile-picture{
+        width: 30px;
+        margin-right: 30px;
+    }
 }
 @media (max-width:600px) {
     .navbar-right{
