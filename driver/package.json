@@ -17,6 +17,19 @@
     "antd": {
         "react": "$react",
         "react-dom": "$react"
+    },
+    "@mui/lab": {
+      "@types/react": "$@types/react"
+    },
+    "@mui/material": {
+      "@types/react": "$@types/react",
+      "@emotion/react": "$@emotion/react",
+      "@emotion/styled": "$@emotion/styled"
+    },
+    "@mui/icons-material":{
+        "@types/react": "$@types/react",
+        "@emotion/react": "$@emotion/react",
+        "@emotion/styled": "$@emotion/styled"
     }
     },
     "dependencies": {
