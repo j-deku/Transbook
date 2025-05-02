@@ -399,4 +399,8 @@ p.profileName{
     .navbar-right .searchImage{
         display: none;
     }
+    .navbar-right .profile-picture{
+        width: 30px;
+        margin-right: 50px;
+    }
 }
