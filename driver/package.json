@@ -9,8 +9,14 @@
         "lint": "eslint .",
         "preview": "vite preview"
     },
+    "resolutions": {
+        "@mui/lab/react": "^19.0.0",
+        "@mui/material/react": "^19.0.0",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0"
+      },
     "overrides": {
-    "react-google-places-autocomplete": {
+        "react-google-places-autocomplete": {
         "react": "$react",
         "react-dom": "$react"
     },
@@ -18,20 +24,19 @@
         "react": "$react",
         "react-dom": "$react"
     },
-    "@mui/lab": {
-      "@types/react": "$@types/react"
-    },
-    "@mui/material": {
-      "@types/react": "$@types/react",
-      "@emotion/react": "$@emotion/react",
-      "@emotion/styled": "$@emotion/styled"
-    },
-    "@mui/icons-material":{
-        "@types/react": "$@types/react",
-        "@emotion/react": "$@emotion/react",
-        "@emotion/styled": "$@emotion/styled"
-    }
-    },
+        "@mui/lab": {
+          "react": "$react",
+          "react-dom": "$react"
+        },
+        "@mui/material": {
+          "react": "$react",
+          "react-dom": "$react"
+        },
+        "@mui/icons-material": {
+          "react": "$react",
+          "react-dom": "$react"
+        }
+      },
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
