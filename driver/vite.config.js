@@ -99,7 +99,7 @@ export default defineConfig({
   base:'/',
   server: {
     proxy: {
-      '/api':import.meta.url,
+      '/api':import.meta.env.VITE_API_BASE_URL,
     },
   },
   build: {
