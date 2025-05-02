@@ -340,6 +340,10 @@ const googleAuthCallback = async (req, res) => {
       });
     }
 
+    if (!req.user) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=google_auth_failed`);
+    }
+
     const { id: googleId, displayName, emails, photos } = req.user;
     const email = emails?.[0]?.value || null;
     const name = displayName || "Google User";
@@ -367,15 +371,14 @@ const googleAuthCallback = async (req, res) => {
     const token = createToken(user._id);
     await sendEmail(email, "Welcome Back 🚌", EmailWelcome(user.name));
 
-    const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
+    const redirectUrl = new URL(process.env.FRONTEND_URL);
+    redirectUrl.pathname = "/"; 
+    redirectUrl.searchParams.set("token", token);
+    redirectUrl.searchParams.set("name", user.name);
+    redirectUrl.searchParams.set("email", user.email);
+    redirectUrl.searchParams.set("avatar", avatar);
 
-    res.redirect(
-      `${frontendURL}/?token=${token}&name=${encodeURIComponent(
-        user.name
-      )}&email=${encodeURIComponent(user.email)}&avatar=${encodeURIComponent(
-        avatar
-      )}`
-    );
+    res.redirect(redirectUrl.toString());
 
     // Send push notification
     if (user.fcmToken) {
@@ -418,6 +421,7 @@ const googleAuthCallback = async (req, res) => {
 
   } catch (error) {
     console.error("Error during Google authentication:", error.message);
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth_error`);
 
     return res.status(500).json({
       success: false,

@@ -1,6 +1,8 @@
 import express from "express";
 import { body } from "express-validator";
-import passport from 'passport'
+import passport from "../config/passport.js";
+import dotenv from "dotenv";
+dotenv.config();
 import rateLimit from "express-rate-limit";
 import {
   loginUser,
@@ -61,7 +63,7 @@ UserRouter.get("/autoComplete", placesApi);
 UserRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 UserRouter.get("/google/callback",passport.authenticate("google", {
-    failureRedirect: "/api/user/google/failure",
+    failureRedirect:`${process.env.FRONTEND_URL}/login?error=google_auth_failed`,
   }),
   googleAuthCallback
 );
