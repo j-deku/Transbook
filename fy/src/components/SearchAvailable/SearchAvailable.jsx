@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { Box, Button, Modal, Typography, useMediaQuery, useTheme} from '@mui/material';
+import { Box, Button, Modal, Typography, useMediaQuery, useTheme, CircularProgress} from '@mui/material';
 import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -31,6 +31,7 @@ const SearchAvailable = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -101,6 +102,8 @@ const SearchAvailable = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    if (loading) return;  
+    setLoading(true); 
     // Use only the city/first segment before comma
     const rawPickup = pickup.split(',')[0].trim();
     const rawDestination = destination.split(',')[0].trim();
@@ -114,6 +117,7 @@ const SearchAvailable = () => {
     const archives = JSON.parse(localStorage.getItem('searchArchives')) || [];
     archives.unshift(searchData);
     localStorage.setItem('searchArchives', JSON.stringify(archives));
+    handleClose();
     navigate('/searchRides', { state: searchData });
   };
 
@@ -246,9 +250,17 @@ const SearchAvailable = () => {
             </div>
           </div>
           {/* Submit */}
-          <button type="submit" className="btn-submit">Search</button>
-        </form>          
-          {/* Close Modal Button */}
+          <button
+            type="submit"
+            className="btn-submit"
+            disabled={loading}               
+          >
+            {loading
+              ? <CircularProgress size={20} color="inherit" />   
+              : 'Search'
+            }
+          </button>        
+          </form>          
           <Button 
             variant="contained" 
             fullWidth 

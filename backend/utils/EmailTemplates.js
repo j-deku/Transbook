@@ -261,7 +261,7 @@ const VerifiedEmail = (name) => `
     <!-- Header Section -->
     <div class="header">
       <img src=${process.env.LOGO} alt="TransBook" width="100" height="100">
-      <h2>Welcome to TransBook!</h2>
+      <h2>Welcome to TOLI-TOLI!</h2>
     </div>
 
     <!-- Body Section -->
@@ -271,7 +271,7 @@ const VerifiedEmail = (name) => `
         Hi ${name},
       </p>
       <p>
-        Congratulations! Your email has been successfully verified. We’re excited to have you as part of our growing community. Now you can start exploring everything TransBook has to offer.
+        Congratulations! Your email has been successfully verified. We’re excited to have you as part of our growing community. Now you can start exploring everything TOLI-TOLI has to offer.
       </p>
 
       <!-- GIF Section -->
