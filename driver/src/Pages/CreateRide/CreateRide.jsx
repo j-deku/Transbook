@@ -3,6 +3,9 @@ import React, { useContext, useState } from "react";
 import "./CreateRide.css";
 import axios from "axios";
 import { toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress"; 
+import { Button } from "@mui/material";
+// MUI spinner :contentReference[oaicite:9]{index=9}
 import { StoreContext } from "../../context/StoreContext";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import {
@@ -10,7 +13,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   Typography,
   Box,
 } from "@mui/material";
@@ -32,6 +34,8 @@ const CreateRide = () => {
   const [data, setData] = useState({ ...initialState });
   const [showModal, setShowModal] = useState(false);
   const [createdRide, setCreatedRide] = useState(null);
+  const [loading, setLoading] = useState(false); // loading state :contentReference[oaicite:10]{index=10}
+
 
   const handlePlaceChange = (value, field) => {
     setData((prev) => ({ ...prev, [field]: value ? value.label : "" }));
@@ -89,6 +93,7 @@ const CreateRide = () => {
         formData.append(key, value);
       }
     });
+    setLoading(true); 
 
     try {
       const token = localStorage.getItem("token");
@@ -109,6 +114,8 @@ const CreateRide = () => {
     } catch (err) {
       toast.error("Failed to add ride");
       console.error(err);
+    }finally {
+      setLoading(false);                // hide spinner in all cases :contentReference[oaicite:12]{index=12}
     }
   };
 
@@ -236,14 +243,20 @@ const CreateRide = () => {
           </div>
         </div>
 
-        <button type="submit" className="btn-submit">
-          ADD RIDE
-        </button>
+         <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+        >
+          {loading ? "ADDING..." : "ADD RIDE"}
+        </Button>
       </form>
 
       {/* Success Modal */}
       <Dialog open={showModal} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Ride Created Successfully</DialogTitle>
+        <DialogTitle>Ride Created Successfully ✅</DialogTitle>
         {createdRide && (
           <DialogContent dividers>
             <Box mb={2}>

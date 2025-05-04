@@ -199,14 +199,11 @@ button:hover {
 .date .date-picker{
   outline: 2px solid gray;
   border-radius: 5px;
+  padding: 2px;
+  /* Add any additional styles you want for the date input */
+  background-color: transparent;
+  color: #fff;
 }
 .date-picker label{
   color: #ccc;
-}
-.date-picker text{
-  Max-height:20px;
-  color: white;
-  &::placeholder{
-    color: white !important;
-  }
 }

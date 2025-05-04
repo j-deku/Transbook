@@ -1,12 +1,13 @@
 import { useContext, useState, useEffect, useCallback } from 'react';
 import './ExploreMenu.css';
-import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { MobileDatePicker, DesktopDatePicker } from '@mui/x-date-pickers';
+
 // Utility: strip accents from strings
 const removeAccents = (str) =>
   str.normalize('NFD').replace(/[̀-\u036f]/g, '');
@@ -24,18 +25,15 @@ const ExploreMenu = () => {
   const [destIndex, setDestIndex] = useState(-1);
   const { url } = useContext(StoreContext);
   const navigate = useNavigate();
-  const theme = useTheme();
-const isMobileView = useMediaQuery(theme.breakpoints.down('sm'));
 
-
-const debounce = (fn, delay) => {
+  const debounce = (fn, delay) => {
     let timer;
     return (...args) => {
       clearTimeout(timer);
       timer = setTimeout(() => fn(...args), delay);
     };
   };
-  
+
   const fetchLocationSuggestions = useCallback(
     async (input, setFn) => {
       if (!input) {
@@ -178,29 +176,28 @@ const debounce = (fn, delay) => {
             )}
           </div>
           {/* Date Picker */}
-
           <div className="form-group date">
-          <label>Preferred Date <FaCalendar /></label><br/>
-          {isMobileView ? (
-        <MobileDatePicker
-          label="Preferred Date"
-          className='date-picker'
-          value={selectedDate}
-          onChange={setSelectedDate}
-          minDate={new Date()}
-          maxDate={new Date(Date.now() + 7 * 86400000)}
-        />
-      ) : (
-        <DesktopDatePicker
-          label="Preferred Date"
-          value={selectedDate}
-          className='date-picker'
-          onChange={setSelectedDate}
-          minDate={new Date()}
-          maxDate={new Date(Date.now() + 7 * 86400000)}
-        />
-      )}
-        </div>          {/* Passengers */}
+            <label>Preferred Date <FaCalendar /></label>
+           <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            placeholderText="Select a date"
+            className="date-picker-input"
+            calendarClassName="custom-calendar"
+            dateFormatCalendar="MMMM yyyy"
+            todayButton="Today"
+            isClearable
+            showPopperArrow={false}
+            required
+            showMonthDropdown
+            dropdownMode="select"
+            minDate={new Date()}
+            maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
+            timeIntervals={30}
+            dateFormat="MMMM d, yyyy"
+          />
+          </div>
+          {/* Passengers */}
           <div className="form-group passengers">
             <label>Passengers <FaUser /></label>
             <div className="passenger-input">
