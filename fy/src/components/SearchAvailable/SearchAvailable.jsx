@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { Box, Button, Modal, Typography, useMediaQuery, useTheme, CircularProgress} from '@mui/material';
+import { Box, Button, Modal, Typography, useMediaQuery, useTheme, CircularProgress, TextField} from '@mui/material';
 import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import "./SearchAvailable.css";
+import { DesktopDatePicker, MobileDatePicker } from '@mui/x-date-pickers';
 
 const modalStyle = {
   position: 'absolute',
@@ -35,6 +35,8 @@ const SearchAvailable = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'));
+
   // States for the search form (integrated ExploreMenu logic)
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
@@ -48,6 +50,7 @@ const SearchAvailable = () => {
   const [destIndex, setDestIndex] = useState(-1);
   const { url } = useContext(StoreContext);
   const navigate = useNavigate();
+  
 
   const debounce = (fn, delay) => {
     let timer;
@@ -220,26 +223,42 @@ const SearchAvailable = () => {
           </div>
           {/* Date Picker */}
           <div className="form-group date">
-            <label>Preferred Date <FaCalendar /></label><br/>
-           <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            placeholderText="Select a date"
-            className="date-picker-input"
-            calendarClassName="custom-calendar"
-            dateFormatCalendar="MMMM yyyy"
-            todayButton="Today"
-            isClearable
-            showPopperArrow={false}
-            required
-            showMonthDropdown
-            dropdownMode="select"
-            minDate={new Date()}
-            maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
-            timeIntervals={30}
-            dateFormat="MMMM d, yyyy"
-          />
-          </div>
+          <label>Preferred Date <FaCalendar /></label><br/>
+          {isMobileView ? (
+            <MobileDatePicker
+              label="Select date"
+              inputFormat="dd/MM/yyyy"
+              mask="__ / __ / ____"
+              disablePast
+              className='date-picker'
+              views={['year', 'month', 'day']}
+              PopperProps={{ placement: 'bottom-start' }}
+              componentsProps={{ actionBar: { actions: ['clear', 'accept'] } }}
+              components={{ ActionBar: () => null }}
+              renderDay={(day, selectedDate, isInCurrentMonth, dayComponent) => {
+                const isSelected = selectedDate && day.getDate() === selectedDate.getDate() && day.getMonth() === selectedDate.getMonth() && day.getFullYear() === selectedDate.getFullYear();
+                return (
+                  <div className={`day ${isSelected ? 'selected' : ''}`}>
+                    {dayComponent}
+                  </div>
+                );
+              }}
+              value={selectedDate}
+              onChange={(newDate) => setSelectedDate(newDate)}
+              minDate={new Date()}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
+            />
+          ) : (
+            <DesktopDatePicker
+              label="Select date"
+              className='date-picker'
+              value={selectedDate}
+              onChange={(newDate) => setSelectedDate(newDate)}
+              minDate={new Date()}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
+            />
+          )}
+        </div>      
           {/* Passengers */}
           <div className="form-group passengers">
             <label>Passengers <FaUser /></label><br/>

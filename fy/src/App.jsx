@@ -31,6 +31,8 @@ import UserSocketProvider from '../Provider/UserSocketProvider'
 import NotificationSetup from './components/NotificationSetup/NotificationSetup'
 import TrackRide from './Pages/TrackRide/TrackRide'
 import { StoreContext } from './context/StoreContext'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const App = () => {
   const [login, setLogin] = useState(false)
@@ -64,6 +66,7 @@ const App = () => {
 
   return (
     <div>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <UserSocketProvider>
         <ToastContainer position="top-left" />
         {token && <NotificationSetup />} 
@@ -95,6 +98,7 @@ const App = () => {
         </div>
         <Footer />
       </UserSocketProvider>
+      </LocalizationProvider>
     </div>
   )
 }
