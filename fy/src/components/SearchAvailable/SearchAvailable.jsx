@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { Box, Button, Modal, Typography, useMediaQuery, useTheme, CircularProgress, TextField} from '@mui/material';
+import { Box, Button, Modal, Typography, useMediaQuery, useTheme, CircularProgress} from '@mui/material';
 import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
 import 'react-datepicker/dist/react-datepicker.css';
 import { StoreContext } from '../../context/StoreContext';
@@ -222,18 +222,33 @@ const SearchAvailable = () => {
             )}
           </div>
           {/* Date Picker */}
-          <div className="form-group date">
+          <div className="form-group date2">
           <label>Preferred Date <FaCalendar /></label><br/>
           {isMobileView ? (
             <MobileDatePicker
               label="Select date"
+              className='date-picker'
+              views={['year', 'month', 'day']}
               inputFormat="dd/MM/yyyy"
               mask="__ / __ / ____"
               disablePast
-              className='date-picker'
-              views={['year', 'month', 'day']}
               PopperProps={{ placement: 'bottom-start' }}
               componentsProps={{ actionBar: { actions: ['clear', 'accept'] } }}
+               slotProps={{
+                  textField: {
+                    InputProps: {
+                      sx: {
+                        height: '40px',
+                        outline: '1px solid gray',
+                        border:'none',
+                        color: '#fff',
+                        borderRadius: '5px',
+                        '& svg': { color: '#ccc' },
+                        '&:hover': { outline: '1px solid darkgray' },
+                      },
+                    },
+                  },
+                }}              
               components={{ ActionBar: () => null }}
               renderDay={(day, selectedDate, isInCurrentMonth, dayComponent) => {
                 const isSelected = selectedDate && day.getDate() === selectedDate.getDate() && day.getMonth() === selectedDate.getMonth() && day.getFullYear() === selectedDate.getFullYear();
@@ -252,11 +267,27 @@ const SearchAvailable = () => {
             <DesktopDatePicker
               label="Select date"
               className='date-picker'
+              views={['year', 'month', 'day']}
               value={selectedDate}
-              onChange={(newDate) => setSelectedDate(newDate)}
+              onChange={setSelectedDate}
               minDate={new Date()}
-              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
-            />
+              maxDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)}
+              slotProps={{
+                  textField: {
+                    InputProps: {
+                      sx: {
+                        height: '40px',
+                        outline: '1px solid gray',
+                        border:'none',
+                        color: '#fff',
+                        borderRadius: '5px',
+                        '& svg': { color: '#ccc' },
+                        '&:hover': { outline: '1px solid darkgray' },
+                      },
+                    },
+                  },
+                }}              
+                />
           )}
         </div>      
           {/* Passengers */}

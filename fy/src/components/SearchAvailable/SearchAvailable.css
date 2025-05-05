@@ -39,6 +39,13 @@
     width: 50%;
     margin: 0 10px;
 }
+
+.date2{
+    margin-top: 0;
+}
+.date2 .date-picker label{
+    color: #ccc;
+  }
 @media (max-width:750px) {
     .available-search{
         display: block;

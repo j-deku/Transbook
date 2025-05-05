@@ -1,13 +1,12 @@
 import { useContext, useState, useEffect, useCallback } from 'react';
 import './ExploreMenu.css';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { MobileDatePicker, DesktopDatePicker } from '@mui/x-date-pickers';
 // Utility: strip accents from strings
 const removeAccents = (str) =>
   str.normalize('NFD').replace(/[̀-\u036f]/g, '');
@@ -25,6 +24,9 @@ const ExploreMenu = () => {
   const [destIndex, setDestIndex] = useState(-1);
   const { url } = useContext(StoreContext);
   const navigate = useNavigate();
+  const theme = useTheme();
+const isMobileView = useMediaQuery(theme.breakpoints.down('sm'));
+
 
   const debounce = (fn, delay) => {
     let timer;
@@ -33,7 +35,7 @@ const ExploreMenu = () => {
       timer = setTimeout(() => fn(...args), delay);
     };
   };
-
+  
   const fetchLocationSuggestions = useCallback(
     async (input, setFn) => {
       if (!input) {
@@ -176,28 +178,69 @@ const ExploreMenu = () => {
             )}
           </div>
           {/* Date Picker */}
+
           <div className="form-group date">
-            <label>Preferred Date <FaCalendar /></label>
-           <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            placeholderText="Select a date"
-            className="date-picker-input"
-            calendarClassName="custom-calendar"
-            dateFormatCalendar="MMMM yyyy"
-            todayButton="Today"
-            isClearable
-            showPopperArrow={false}
-            required
-            showMonthDropdown
-            dropdownMode="select"
-            minDate={new Date()}
-            maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
-            timeIntervals={30}
-            dateFormat="MMMM d, yyyy"
-          />
-          </div>
-          {/* Passengers */}
+          <label>Preferred Date <FaCalendar /></label><br/>
+          {isMobileView ? (
+            <MobileDatePicker
+              label="Select date"
+              className='date-picker'
+              views={['year', 'month', 'day']}
+              value={selectedDate}
+              onChange={(newDate) => setSelectedDate(newDate)}
+              minDate={new Date()}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
+              slotProps={{
+                  textField: {
+                    InputProps: {
+                      sx: {
+                        height: '40px',
+                        outline: '1px solid gray',
+                        border:'none',
+                        color: '#fff',
+                        borderRadius: '5px',
+                        '& svg': { color: '#ccc' },
+                        '&:hover': { outline: '1px solid darkgray' },
+                      },
+                    },
+                  },
+                }}              
+            />
+          ) : (
+            <DesktopDatePicker
+              label="Select date"
+              className='date-picker'
+              views={['year', 'month', 'day']}
+              value={selectedDate}
+              onChange={(newDate) => setSelectedDate(newDate)}
+              minDate={new Date()}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
+              slotProps={{
+                  textField: {
+                    InputProps: {
+                      sx: {
+                        height: '35px',
+                        outline: '1px solid gray',
+                        border:'none',
+                        color: '#fff',
+                        borderRadius: '5px',
+                        '& svg': { color: '#ccc' },
+                        '&:hover': { outline: '1px solid darkgray' },
+                      },
+                    },
+                  },
+                }}         
+                renderDay={(day, selectedDate, isInCurrentMonth, dayComponent) => {
+                const isSelected = selectedDate && day.getDate() === selectedDate.getDate() && day.getMonth() === selectedDate.getMonth() && day.getFullYear() === selectedDate.getFullYear();
+                return (
+                  <div className={`day ${isSelected ? 'selected' : ''}`}>
+                    {dayComponent}
+                  </div>
+                );
+              }}     
+            />
+          )}
+        </div>          {/* Passengers */}
           <div className="form-group passengers">
             <label>Passengers <FaUser /></label>
             <div className="passenger-input">
