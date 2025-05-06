@@ -1,4 +1,5 @@
 // src/App.jsx
+import NotificationSetup from './components/NotificationSetup/NotificationSetup'
 import { useEffect, useState, useContext } from 'react'
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
@@ -28,7 +29,6 @@ import PasswordReset from './components/PasswordReset/PasswordReset'
 import FirstQuestion from './components/FirstQuestion/FirstQuestion'
 import BookingDashboard from './Pages/BookingDashboard/BookingDashboard'
 import UserSocketProvider from '../Provider/UserSocketProvider'
-import NotificationSetup from './components/NotificationSetup/NotificationSetup'
 import TrackRide from './Pages/TrackRide/TrackRide'
 import { StoreContext } from './context/StoreContext'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';

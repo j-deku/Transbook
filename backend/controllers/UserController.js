@@ -32,15 +32,15 @@ const registerUser = async (req, res) => {
   try {
     const exists = await userModel.findOne({ email });
     if (exists) {
-      return res.json({ success: false, message: "User already exists" });
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
     if (!validator.isEmail(email)) {
-      return res.json({ success: false, message: "Invalid email format" });
+      return res.status(401).json({ success: false, message: "Invalid email format" });
     }
 
     if (!validator.isStrongPassword(password)) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         message:
           "Password must be at least 8 characters long and include uppercase, lowercase, and a special character.",
@@ -93,7 +93,7 @@ const registerUser = async (req, res) => {
         console.warn("User FCM token not found; push notification not sent.");
       }
 
-      res.json({
+      res.status(200).json({
         success: true,
         message: "OTP sent to your email",
         redirect: "/verify-otp",
@@ -102,11 +102,11 @@ const registerUser = async (req, res) => {
     } catch (error) {
       console.error("Error sending email:", error);
       await userModel.findByIdAndDelete(user._id);
-      return res.json({ success: false, message: "Failed to send email" });
+      return res.status(404).json({ success: false, message: "Failed to send email" });
     }
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: "Network Unstable" });
+    res.status(500).json({ success: false, message: "Server is down. Please try again later" });
   }
 };
 

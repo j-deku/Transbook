@@ -31,6 +31,7 @@ import { connectDB } from "./config/Db.js";
 import { ensureSuperAdminExists } from "./controllers/AdminController.js";
 import copyDatabase from "./utils/copyDatabase.js";
 import dotenv from "dotenv";
+import DeviceRouter from "./routes/DeviceRoute.js";
 dotenv.config();
 
 // ── ESM __dirname Derivation ───────────────────────────────────────────────────
@@ -87,6 +88,7 @@ app.use(limiter);
 
 // ── 3) API Route Mounts ─────────────────────────────────────────────────────────
 app.use("/api/user", userRouter);
+app.use("/api/devices", DeviceRouter);
 app.use("/api/rides", rideRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/booking", bookRouter);

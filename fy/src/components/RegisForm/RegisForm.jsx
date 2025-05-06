@@ -55,7 +55,19 @@ const RegisForm = ({ setLogin }) => {
         toast.warn(response.data.message);
       }
     } catch (error) {
-      toast.error(error);
+      if(error.response && error.response.status === 400){
+        toast.error(error.status.message || "User already exists");
+      }else if(error.response && error.response.status === 401){
+        toast.error(error.status.message || "Invalid email format");
+      }else if(error.response && error.response.status === 403){
+        toast.warn(error.status.message || "Password must be at least 8 characters long and include uppercase, lowercase, and a special character.");
+      }else if(error.response && error.response.status === 500){
+        toast.error(error.status.message || "Sever down. Please try again later.")
+      }else if (error.code === "ERR NETWORK"){
+        toast.warn("Network unstable. Check your internet connection");
+      }else{
+        toast.error(error);
+      }
     } finally {
       setIsSubmitting(false);
     }

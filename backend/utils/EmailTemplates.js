@@ -226,7 +226,7 @@ const VerifiedEmail = (name) => `
     .button {
       display: inline-block;
       background-color: #1e88e5;
-      color: #ffffff;
+      color: #fff;
       text-decoration: none;
       padding: 12px 20px;
       border-radius: 5px;

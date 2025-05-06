@@ -25,13 +25,21 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "driver", "admin"], 
       default: "user" 
     },
-    fcmToken: { type: String, default: "", unique: true, sparse: true, require:true }, // Firebase Cloud Messaging token
+    fcmToken: { type: String, default: null, unique: true, sparse: true },
   },
   { timestamps: true }
 );
 
 // Add Index for Optimized Search
-userSchema.index();
+userSchema.index( 
+  { fcmToken: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      fcmToken: { $type: "string", $ne: null, $ne: "" }
+    }
+  }
+);
 
 const userModel = mongoose.models.user || mongoose.model("User", userSchema);
 export default userModel;
