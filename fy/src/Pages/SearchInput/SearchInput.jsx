@@ -1,12 +1,12 @@
 import React from 'react'
 import './SearchInput.css'
-import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
+import SearchAvailable from '../../components/SearchAvailable/SearchAvailable'
 
 const SearchInput = () => {
   return (
     <div className='searchInput'>
     <h1>Search Your Rides</h1>
-      <ExploreMenu/>
+    <SearchAvailable/>
     </div>
   )
 }

@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 
+// Supported currencies (ISO 4217)
+const CURRENCY_CODES = ["USD","EUR","GBP","NGN","KES","NGN", "CFA","GHC"];
+
 // Define an Address subdocument schema
 const AddressSchema = new mongoose.Schema(
   {
-    firstName: {type: String, required:true},
-    lastName: {type: String, required:true},
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     street: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String },
@@ -25,6 +28,12 @@ const RideSchema = new mongoose.Schema(
     pickup: { type: String, required: true },
     destination: { type: String, required: true },
     price: { type: Number, required: true },
+    currency: {
+      type: String,
+      enum: CURRENCY_CODES,
+      default: "USD",
+      required: true
+    },
     description: { type: String, required: true },
     selectedDate: { type: Date, required: true },
     selectedTime: { type: String, required: true },
@@ -46,6 +55,12 @@ const BookingSchema = new mongoose.Schema(
     userId: { type: String, required: true },
     rides: { type: [RideSchema], required: true },
     amount: { type: Number, required: true },
+    currency: {
+      type: String,
+      enum: CURRENCY_CODES,
+      default: "USD",
+      required: true
+    },
     address: { type: AddressSchema, required: true },
     status: { 
       type: String, 

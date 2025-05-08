@@ -46,7 +46,7 @@ const MyBookings = () => {
                   </React.Fragment>
                 ))}
               </p>
-              <p>${booking.amount}.00</p>
+              <p>{booking.currency} {booking.amount}.00</p>
               <p><strong>Rides:</strong> {rides.length}</p>
               <p>
                 <span>&#x25cf;</span> <b>{booking.status}</b>

@@ -50,7 +50,7 @@ const Cart = () => {
               <div className="cart-title cart-items-item">
                 <p>{ride.pickup} → {ride.destination}</p>
                 <p>{new Date(ride.selectedDate).toLocaleDateString()}</p>
-                <p>${ride.price.toFixed(2)}</p>
+                <p>{ride.currency} {ride.price.toFixed(2)}</p>
                 <p>
                   <img
                     onClick={() => handleRemoveRide(index)}

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import "./Home.css";
 import Header from "../../components/Header/Header";
-import ExploreMenu from "../../components/ExploreMenu/ExploreMenu";
 import DesignDisplay from "../../components/DesignDisplay/DesignDisplay";
 import AppDownload from "../../components/AppDownload/AppDownload";
 import { toast } from "react-toastify";
@@ -28,8 +27,7 @@ const Home = () => {
     <div>
       <NotificationCenter/>
       <Header />
-      <SearchAvailable/>
-      <ExploreMenu/>
+      <SearchAvailable />
       <DesignDisplay />
       <Partners/>
       <Bot/>

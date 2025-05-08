@@ -31,7 +31,14 @@ const PlaceBookings = () => {
   };
 
   const getTotalCartAmount = () => {
-    return selectedRides.reduce((total, ride) => total + ride.price, 0);
+    return selectedRides.reduce((total, ride) => total + Number(ride.price), 0);
+  };
+
+  // Determine currency (assumes all rides use same currency)
+  const getCurrency = () => {
+    return selectedRides.length > 0 && selectedRides[0].currency
+      ? selectedRides[0].currency
+      : "USD";
   };
 
   const placeBook = async (event) => {
@@ -47,21 +54,29 @@ const PlaceBookings = () => {
       return;
     }
 
+    const amount = getTotalCartAmount();
+    const serviceFee = amount === 0 ? 0 : 2;
+
     let orderData = {
       address: data,
       rides: selectedRides,
-      amount: getTotalCartAmount() + 2, // Adding service fee
+      amount: amount + serviceFee,
+      currency: getCurrency(),
       status: "pending approval",
       email: data.email,
     };
 
     try {
       const token = localStorage.getItem("token");
-      let response = await axiosInstance.post(`${url}/api/booking/place`, orderData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },      
-      });
+      let response = await axiosInstance.post(
+        `${url}/api/booking/place`,
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         const { authorization_url } = response.data;
@@ -79,6 +94,11 @@ const PlaceBookings = () => {
       toast.error("An error occurred while placing your order");
     }
   };
+
+  const currency = getCurrency();
+  const subtotal = getTotalCartAmount();
+  const serviceFee = subtotal === 0 ? 0 : 2;
+  const total = subtotal + serviceFee;
 
   return (
     <form onSubmit={placeBook} className="placeOrder">
@@ -156,34 +176,30 @@ const PlaceBookings = () => {
         </div>
         <input
           type="tel"
-          name="phone"
-          onChange={onChangeHandler}
-          value={data.phone}
-          placeholder="Phone +2333 ...."
-          required
+            name="phone"
+            onChange={onChangeHandler}
+            value={data.phone}
+            placeholder="Phone +2333 ...."
+            required
         />
       </div>
 
       <div className="placeOrder-right">
         <div className="cart-total">
           <h2>Cart Totals</h2>
-          <div>
-            <div className="cart-total-details">
-              <p>SubTotal</p>
-              <p>${getTotalCartAmount().toFixed(2)}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Service Fee</p>
-              <p>${getTotalCartAmount() === 0 ? "0.00" : "2.00"}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Total</p>
-              <p>
-                ${(getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2).toFixed(2)}
-              </p>
-            </div>
+          <div className="cart-total-details">
+            <p>SubTotal</p>
+            <p>{currency} {subtotal.toFixed(2)}</p>
+          </div>
+          <hr />
+          <div className="cart-total-details">
+            <p>Service Fee</p>
+            <p>{currency} {serviceFee.toFixed(2)}</p>
+          </div>
+          <hr />
+          <div className="cart-total-details">
+            <p>Total</p>
+            <p>{currency} {total.toFixed(2)}</p>
           </div>
           <button type="submit" disabled={selectedRides.length === 0}>
             PROCEED TO PAYMENT

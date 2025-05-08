@@ -31,6 +31,12 @@ const RideSchema = new mongoose.Schema(
     pickup:      { type: String, required: true, trim: true },
     destination: { type: String, required: true, trim: true },
     price:       { type: Number, required: true },
+    currency:    { 
+      type: String, 
+      enum: ["USD","EUR","GBP","NGN","KES", "CFA", "GHC"/* etc */], 
+      default: "USD", 
+      required: true 
+    },
     description: { type: String, required: true },
     selectedDate:{ type: Date,   required: true },
     selectedTime:{ type: String, required: true },

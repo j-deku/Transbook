@@ -95,3 +95,41 @@
 {"attempt":0,"fcmToken":"dxZHNe1gWVEkGGqiS7aII7:APA91bEPEnXiVsuz3LX2dSCxor6ienf12tvntlCyu1ZQfuqANHjIK_U_TAmXItgDAElZekFZ8Ewuk6JIdFpmJz6WcYLaoWp0nLEOK1j5s6mXDo1ghHVW488","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/875cf9f8-fb0a-4e55-a7d1-dc42b2d61b79"}
 {"attempt":0,"fcmToken":"eroThrzDVhXLSRZ3aN_i73:APA91bEUDYg91O2RGBp59Q0WlgnldePzfbUHV0MgDDaLMK3WKMLL20nIfq6LX11uf6DTWiaBPWPs8jFiZTc8_9RS3uRDM9zBZnmEwdBWQrVlR1ynVZXPUes","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/eac65353-bb2c-42ea-b1cf-bc367fc77035"}
 {"attempt":0,"fcmToken":"dxZHNe1gWVEkGGqiS7aII7:APA91bEPEnXiVsuz3LX2dSCxor6ienf12tvntlCyu1ZQfuqANHjIK_U_TAmXItgDAElZekFZ8Ewuk6JIdFpmJz6WcYLaoWp0nLEOK1j5s6mXDo1ghHVW488","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/7a817390-7745-4bbe-b59b-fbb5b06db6e8"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/placeDetails?place_id=ChIJ-z3wwc1yIRARTZ8tLEbXVsg"}
+{"attempt":0,"fcmToken":"dXThCB3LiCELEiTm-fTo3G:APA91bE9-IDSjErhEBxjEta9x_h8bvYwZQhjoTTcuClP7iv1ohY-6x7RtHPgZClae_iQnYlC4U3rv1pEJTmyBeFmeds5ZtBQoToAoUUA6qQeqYdOhY1OzmI","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/e9ae4d3e-89ed-48ed-8474-bf169e9ff0f2"}
+{"attempt":0,"fcmToken":"eroThrzDVhXLSRZ3aN_i73:APA91bEe2S_GxnrYJVR58zlr9kEQZGhLO0rTRWozwQKdSRiW_cRZeesFgY1qyoGNYqpwmk5yqK_GxY978ZRwlHQpo_dLYOIZhkCLmSDzBu5YqX9-ZZIPZwg","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/a6733019-c378-4829-91dc-9446170a4acb"}
+{"attempt":0,"fcmToken":"eroThrzDVhXLSRZ3aN_i73:APA91bEe2S_GxnrYJVR58zlr9kEQZGhLO0rTRWozwQKdSRiW_cRZeesFgY1qyoGNYqpwmk5yqK_GxY978ZRwlHQpo_dLYOIZhkCLmSDzBu5YqX9-ZZIPZwg","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/de53aa82-e4a6-4dee-a0b1-f9d3f9b704f9"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"attempt":0,"code":"messaging/registration-token-not-registered","level":"error","message":"FCM send error Requested entity was not found."}
+{"count":1,"fcmToken":"eroThrzDVhXLSRZ3aN_i73:APA91bEe2S_GxnrYJVR58zlr9kEQZGhLO0rTRWozwQKdSRiW_cRZeesFgY1qyoGNYqpwmk5yqK_GxY978ZRwlHQpo_dLYOIZhkCLmSDzBu5YqX9-ZZIPZwg","level":"info","message":"Unset fcmToken for user(s)"}
+{"attempt":0,"fcmToken":"eEU4Q6IJ7BQmktoEtM_xQn:APA91bEL1hwiiWPA1_iBFNQ93QLl9uPpNzhKXAcJPGqjBHk7c7iDVuHnxYZdDJQ-seLho1NRWPrpskkQl_sq8jQoPlmZIYUf93UwIiocwbkhYcXdCuzKYFo","level":"info","message":"FCM message sent","messageId":"projects/toli-toli-bbea0/messages/e1562b87-b883-487b-9fc4-d23d16d1846a"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}

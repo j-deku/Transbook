@@ -36,7 +36,7 @@ const getDriverRides = async (req, res) => {
   try {
     const rides = await RideModel.find({ driver: req.driver._id })
       .sort({ createdAt: -1 })
-      .select("pickup destination price selectedDate selectedTime passengers type status");
+      .select("pickup destination price selectedDate selectedTime passengers type currency status");
     return res.json({ rides });
   } catch (error) {
     console.error("Error fetching driver rides:", error);
@@ -385,12 +385,14 @@ const addRide = async (req, res) => {
     // 1) Geocode addresses
     const pickupCoords = await geocodeAddress(req.body.pickup);
     const destCoords   = await geocodeAddress(req.body.destination);
-
+    const { currency } = req.body;
+    
     // 2) Instantiate (pre-validate hook will fill normalized fields)
     const ride = new RideModel({
       pickup: req.body.pickup,
       destination: req.body.destination,
       price: Number(req.body.price),
+      currency, 
       description: req.body.description,
       selectedDate: new Date(req.body.selectedDate),
       selectedTime: req.body.selectedTime,

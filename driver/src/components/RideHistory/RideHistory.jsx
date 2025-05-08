@@ -58,7 +58,7 @@ const RideHistory = () => {
                   <td>{new Date(ride.selectedDate).toLocaleString()}</td>
                   <td>{ride.pickup}</td>
                   <td>{ride.destination}</td>
-                  <td>${ride.price.toFixed(2)}</td>
+                  <td>{ride.currency} {ride.price.toFixed(2)}</td>
                   <td>{ride.status}</td>
                   <td>{ride.rating ? ride.rating.toFixed(1) : "N/A"}</td>
                 </tr>

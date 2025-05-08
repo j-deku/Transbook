@@ -3,9 +3,8 @@ import React, { useContext, useState } from "react";
 import "./CreateRide.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import CircularProgress from "@mui/material/CircularProgress"; 
-import { Button } from "@mui/material";
-// MUI spinner :contentReference[oaicite:9]{index=9}
+import CircularProgress from "@mui/material/CircularProgress";
+import { Button, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import { StoreContext } from "../../context/StoreContext";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import {
@@ -17,10 +16,22 @@ import {
   Box,
 } from "@mui/material";
 
+const currencyOptions = [
+  { code: "USD", label: "US Dollar" },
+  { code: "EUR", label: "Euro" },
+  { code: "CFA", label: "CFA franc"},
+  { code: "GHC", label: "Ghana Cedi"},
+  { code: "GBP", label: "British Pound" },
+  { code: "NGN", label: "Nigerian Naira" },
+  { code: "KES", label: "Kenyan Shilling" },
+  // …add as many as you support
+];
+
 const initialState = {
   pickup: "",
   destination: "",
   price: "",
+  currency: "USD",
   description: "",
   selectedDate: "",
   selectedTime: "",
@@ -34,43 +45,23 @@ const CreateRide = () => {
   const [data, setData] = useState({ ...initialState });
   const [showModal, setShowModal] = useState(false);
   const [createdRide, setCreatedRide] = useState(null);
-  const [loading, setLoading] = useState(false); // loading state :contentReference[oaicite:10]{index=10}
-
+  const [loading, setLoading] = useState(false);
 
   const handlePlaceChange = (value, field) => {
-    setData((prev) => ({ ...prev, [field]: value ? value.label : "" }));
+    setData(prev => ({ ...prev, [field]: value ? value.label : "" }));
   };
 
-  const onChangeHandler = (e) => {
+  const onChangeHandler = e => {
     const { name, value } = e.target;
-    setData((prev) => ({ ...prev, [name]: value }));
+    setData(prev => ({ ...prev, [name]: value }));
   };
 
-  const onFileChange = (e) => {
-    setData((prev) => ({ ...prev, image: e.target.files[0] }));
-  };
+  const onFileChange = e =>
+    setData(prev => ({ ...prev, image: e.target.files[0] }));
 
   const validateForm = () => {
-    const {
-      pickup,
-      destination,
-      price,
-      description,
-      selectedDate,
-      selectedTime,
-      type,
-      image,
-    } = data;
-    if (
-      !pickup ||
-      !destination ||
-      !price ||
-      !description ||
-      !selectedDate ||
-      !selectedTime ||
-      !type ||
-      !image
-    ) {
+    const { pickup, destination, price, description, selectedDate, selectedTime, type, image, currency } = data;
+    if (!pickup || !destination || !price || !description || !selectedDate || !selectedTime || !type || !image || !currency) {
       toast.error("All fields are required");
       return false;
     }
@@ -81,7 +72,7 @@ const CreateRide = () => {
     return true;
   };
 
-  const onSubmitHandler = async (e) => {
+  const onSubmitHandler = async e => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -93,8 +84,8 @@ const CreateRide = () => {
         formData.append(key, value);
       }
     });
-    setLoading(true); 
 
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const resp = await axios.post(`${url}/api/driver/add`, formData, {
@@ -103,9 +94,7 @@ const CreateRide = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
       if (resp.data.success) {
-        // Instead of a toast, show the modal
         setCreatedRide(resp.data.ride);
         setShowModal(true);
       } else {
@@ -114,8 +103,8 @@ const CreateRide = () => {
     } catch (err) {
       toast.error("Failed to add ride");
       console.error(err);
-    }finally {
-      setLoading(false);                // hide spinner in all cases :contentReference[oaicite:12]{index=12}
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -168,16 +157,21 @@ const CreateRide = () => {
             />
           </div>
           <div className="form-group">
-            <label>Passengers</label>
-            <input
-              type="number"
-              name="passengers"
-              value={data.passengers}
-              onChange={onChangeHandler}
-              min="1"
-              max="60"
-              required
-            />
+            <FormControl fullWidth required>
+              <InputLabel>Currency</InputLabel>
+              <Select
+                name="currency"
+                value={data.currency}
+                label="Currency"
+                onChange={onChangeHandler}
+              >
+                {currencyOptions.map(c => (
+                  <MenuItem key={c.code} value={c.code}>
+                    {c.code} &nbsp;–&nbsp; {c.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
         </div>
 
@@ -286,7 +280,7 @@ const CreateRide = () => {
               <strong>Type:</strong> {createdRide.type}
             </Typography>
             <Typography variant="subtitle1">
-              <strong>Price:</strong> ${createdRide.price.toFixed(2)}
+              <strong>Price:</strong> {createdRide.currency} {createdRide.price.toFixed(2)}
             </Typography>
             <Box mt={2}>
               <Typography variant="body2">

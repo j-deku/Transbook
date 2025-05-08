@@ -113,7 +113,7 @@ const Bookings = () => {
               <p className="order-item-phone">{booking.address.phone}</p>
             </div>
             <p>Rides: {booking.rides.length}</p>
-            <p>${booking.amount}.00</p>
+            <p>{booking.currency} {booking.amount}.00</p>
             <div>
               <p className={`status-badge ${getStatusClass(booking.status)}`}>
                 {booking.status}

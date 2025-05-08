@@ -146,7 +146,7 @@ const SearchRides = ({ sortOption, filterOption }) => {
                   <div key={ride._id} className='ride-card'>
                     <div className='ride-date'>
                       <p>{formatDate(ride.selectedDate)}</p>
-                      <p>$ {ride.price.toFixed(2)}</p>
+                      <p>{ride.currency} {ride.price.toFixed(2)}</p>
                     </div>
                     <hr style={{ width: '100%' }} />
                     <div className='ride-info'>

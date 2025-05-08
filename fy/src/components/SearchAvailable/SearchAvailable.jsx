@@ -1,143 +1,163 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
-import { Box, Button, Modal, Typography, useMediaQuery, useTheme, CircularProgress} from '@mui/material';
-import { FaCalendar, FaLocationArrow, FaUser, FaExchangeAlt } from 'react-icons/fa';
-import 'react-datepicker/dist/react-datepicker.css';
-import { StoreContext } from '../../context/StoreContext';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  Modal,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  CircularProgress,
+  Skeleton,
+  IconButton,
+} from "@mui/material";
+import {
+  FaCalendar,
+  FaLocationArrow,
+  FaUser,
+  FaExchangeAlt,
+  FaArrowLeft,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { GoogleMap, Marker, useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { DesktopDatePicker, MobileDatePicker } from "@mui/x-date-pickers";
 import "./SearchAvailable.css";
-import { DesktopDatePicker, MobileDatePicker } from '@mui/x-date-pickers';
 
-const modalStyle = {
-  position: 'absolute',
-  m: 25,
-  top: '25%',
-  marginBottom: 50,
-  transform: 'translate(-50%, -50%)',
-  color:"#ccc",
-  width: 400,
+const formModalStyle = {
+  position: "absolute",
+  top: "8%",
+  left: "50%",
+  transform: "translateX(-50%)",
   bgcolor: "#3c3b52",
   boxShadow: 24,
-  borderRadius: 2,
-  p:7,
+  justifyContent: "space-evenly",
+  borderRadius: "25px 25px 0px 0px",
+  p: 4,
+  width: "100%",
+  maxWidth: "500px",
 };
 
-// Utility: strip accents from strings
+const mapModalStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100vh",
+  bgcolor: "#000",
+  p: 0,
+  m: 0,
+};
+
 const removeAccents = (str) =>
-  str.normalize('NFD').replace(/[̀-\u036f]/g, '');
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-const SearchAvailable = () => {
-  // Modal open state
+const libraries = ["places"];
+
+export default function SearchAvailable() {
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
+  // Form Modal
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          const geocoder = new window.google.maps.Geocoder();
+          const latlng = { lat: coords.latitude, lng: coords.longitude };
+          geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === "OK" && results.length) {
+              const human =
+                results.find((r) => !r.types.includes("plus_code")) ||
+                results[0];
+              setPickup(human.formatted_address);
+              setPickupCoords(latlng);
+            }
+            setOpen(true);
+          });
+        },
+        () => setOpen(true)
+      );
+    } else {
+      setOpen(true);
+    }
+  };  
   const handleClose = () => setOpen(false);
-  const [loading, setLoading] = useState(false);
+
+  // Map Modal
+  const [mapOpen, setMapOpen] = useState(false);
+  const [mapField, setMapField] = useState(null); // "pickup" or "destination"
+  const [mapCenter, setMapCenter] = useState({ lat: 3.8480, lng: 11.5021 });
+  const [mapPosition, setMapPosition] = useState(null);
+
+  const handleMapOpen = (field) => {
+    setMapField(field);
+    const coords = field === "pickup" ? pickupCoords : destCoords;
+    if (coords) {
+      setMapCenter(coords);
+      setMapPosition(coords);
+    }
+    setMapOpen(true);
+  };
+  const handleMapClose = () => setMapOpen(false);
+
+  const handleMapClick = (e) => {
+    const latlng = e.latLng.toJSON();
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: latlng }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const addressObj = results.find(r => !r.types.includes("plus_code")) || results[0];
+        if (mapField === "pickup") {
+          setPickup(addressObj.formatted_address);
+          setPickupCoords(latlng);
+        } else if (mapField === "destination") {
+          setDestination(addressObj.formatted_address);
+          setDestCoords(latlng);
+        }
+        setMapPosition(latlng);
+      }
+    });
+  };
+
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'));
-
-  // States for the search form (integrated ExploreMenu logic)
-  const [pickup, setPickup] = useState('');
-  const [destination, setDestination] = useState('');
+  const [pickup, setPickup] = useState("");
+  const [destination, setDestination] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [passengers, setPassengers] = useState(1);
-  const [suggestions, setSuggestions] = useState([]);
-  const [destinationSuggestions, setDestinationSuggestions] = useState([]);
-  const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
-  const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
-  const [pickupIndex, setPickupIndex] = useState(-1);
-  const [destIndex, setDestIndex] = useState(-1);
-  const { url } = useContext(StoreContext);
-  const navigate = useNavigate();
-  
 
-  const debounce = (fn, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn(...args), delay);
-    };
+  const [pickAuto, setPickAuto] = useState(null);
+  const [destAuto, setDestAuto] = useState(null);
+
+  const [pickupCoords, setPickupCoords] = useState(null);
+  const [destCoords, setDestCoords] = useState(null);
+
+  const updateCoords = (place, setter) => {
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ address: place }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        setter(results[0].geometry.location.toJSON());
+      }
+    });
   };
 
-  const fetchLocationSuggestions = useCallback(
-    async (input, setFn) => {
-      if (!input) {
-        setFn([]);
-        return;
-      }
-      try {
-        const res = await axios.get(
-          `${url}/api/placeApi/autoComplete?input=${encodeURIComponent(input)}`
-        );
-        if (res.data.status === 'OK') {
-          setFn(
-            res.data.predictions.map((p) => ({ id: p.place_id, desc: p.description }))
-          );
-        } else {
-          setFn([]);
-        }
-      } catch {
-        setFn([]);
-      }
-    },
-    [url]
-  );
+  const options = { fields: ["formatted_address", "geometry"], strictBounds: false };
 
-  const debouncedPickup = useCallback(debounce(fetchLocationSuggestions, 500), [fetchLocationSuggestions]);
-  const debouncedDest = useCallback(debounce(fetchLocationSuggestions, 500), [fetchLocationSuggestions]);
-
-  useEffect(() => {
-    debouncedPickup(pickup, setSuggestions);
-    setPickupIndex(-1);
-  }, [pickup, debouncedPickup]);
-
-  useEffect(() => {
-    debouncedDest(destination, setDestinationSuggestions);
-    setDestIndex(-1);
-  }, [destination, debouncedDest]);
-
-  const handleSuggestionSelect = (desc, setter) => {
-    setter(desc);
-    setShowPickupSuggestions(false);
-    setShowDestinationSuggestions(false);
+  const onPickLoad = (auto) => setPickAuto(auto);
+  const onPickPlaceChanged = () => {
+    const place = pickAuto?.getPlace();
+    if (place?.formatted_address) setPickup(place.formatted_address);
+    updateCoords(place.formatted_address, setPickupCoords);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (loading) return;  
-    setLoading(true); 
-    // Use only the city/first segment before comma
-    const rawPickup = pickup.split(',')[0].trim();
-    const rawDestination = destination.split(',')[0].trim();
-    const searchData = {
-      pickup: removeAccents(rawPickup),
-      destination: removeAccents(rawDestination),
-      selectedDate: selectedDate ? selectedDate.toISOString().split('T')[0] : '',
-      passengers,
-    };
-    // Save to localStorage
-    const archives = JSON.parse(localStorage.getItem('searchArchives')) || [];
-    archives.unshift(searchData);
-    localStorage.setItem('searchArchives', JSON.stringify(archives));
-    handleClose();
-    navigate('/searchRides', { state: searchData });
-  };
-
-  const handleKeyDown = (e, list, index, setter, suggestionsList) => {
-    if (!suggestionsList.length) return;
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setter((prev) => (prev + 1) % suggestionsList.length);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setter((prev) => (prev <= 0 ? suggestionsList.length - 1 : prev - 1));
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (index >= 0 && index < suggestionsList.length) {
-        handleSuggestionSelect(suggestionsList[index].desc, list);
-      }
-    }
+  const onDestLoad = (auto) => setDestAuto(auto);
+  const onDestPlaceChanged = () => {
+    const place = destAuto?.getPlace();
+    if (place?.formatted_address) setDestination(place.formatted_address);
+    updateCoords(place.formatted_address, setDestCoords);
   };
 
   const handleSwap = () => {
@@ -145,185 +165,260 @@ const SearchAvailable = () => {
     setDestination(pickup);
   };
 
+  const [loading, setLoading] = useState(false);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    const rawPick = pickup.split(",")[0].trim();
+    const rawDest = destination.split(",")[0].trim();
+    const payload = {
+      pickup: removeAccents(rawPick),
+      destination: removeAccents(rawDest),
+      selectedDate: selectedDate?.toISOString().split("T")[0] || "",
+      passengers,
+    };
+    const archives = JSON.parse(localStorage.getItem("searchArchives") || "[]");
+    archives.unshift(payload);
+    localStorage.setItem("searchArchives", JSON.stringify(archives));
+    handleClose();
+    navigate("/searchRides", { state: payload });
+  };
+
+  if (loadError) return <div>Error loading Maps API</div>;
+  if (!isLoaded)
+    return (
+      <>
+        <Skeleton variant="rectangular" width="100%" height={100} sx={{ borderRadius: 2 }} />
+        <Skeleton variant="text" width="80%" height={40} sx={{ mt: 2 }} />
+        <Skeleton variant="rectangle" width="80%" height={50} sx={{ m: 2, borderRadius: 20 }} />
+      </>
+    );
+
+  const SearchForm = (
+    <form onSubmit={handleSearch} className={`search-form ${isMobile ? "" : "desktop-form"}`}>
+      {/* Pickup */}
+      <div className="form-group" style={{ position: "relative" }}>
+        <label>
+          <FaLocationArrow className="icon" /> Pickup
+        </label>
+        <Autocomplete onLoad={onPickLoad} onPlaceChanged={onPickPlaceChanged} options={options}>
+          <input
+            type="text"
+            value={pickup}
+            onChange={(e) => {
+              setPickup(e.target.value);
+              updateCoords(e.target.value, setPickupCoords);
+            }}
+            className="input"
+            placeholder="Enter pickup location"
+            required
+          />
+        </Autocomplete>
+        <Button
+          size="small"
+          variant="text"
+          sx={{ position: "absolute", right: -12, top: 25, bottom: 0, color: "#2cf" }}
+          onClick={() => handleMapOpen("pickup")}
+        >
+          Map
+        </Button>
+      </div>
+
+      {/* Swap */}
+      <div className="form-group swap-icon" onClick={handleSwap}>
+        <FaExchangeAlt className="icon" size={20} style={{ margin: 0, marginTop: "max(-30px, -50px)" }} />
+      </div>
+
+      {/* Destination */}
+      <div className="form-group" style={{ position: "relative" }}>
+        <label>
+          <FaLocationArrow className="icon" /> Destination
+        </label>
+        <Autocomplete onLoad={onDestLoad} onPlaceChanged={onDestPlaceChanged} options={options}>
+          <input
+            type="text"
+            value={destination}
+            onChange={(e) => {
+              setDestination(e.target.value);
+              updateCoords(e.target.value, setDestCoords);
+            }}
+            className="input"
+            placeholder="Enter destination"
+            required
+          />
+        </Autocomplete>
+        <Button
+          size="small"
+          variant="text"
+          sx={{ position: "absolute", right: -12, color: "#2cf", top: 25, bottom: 0, }}
+          onClick={() => handleMapOpen("destination")}
+        >
+          Map
+        </Button>
+      </div>
+
+      {/* Date */}
+      <div className="form-group" style={{ marginLeft: "10px" }}>
+        <label>
+          <FaCalendar className="icon" /> Preferred Date
+        </label>
+        {isMobile ? (
+          <MobileDatePicker
+            value={selectedDate}
+            onChange={setSelectedDate}
+            minDate={new Date()}
+            maxDate={new Date(Date.now() + 7 * 86400000)}
+            slotProps={{
+              textField: {
+                InputProps: {
+                  sx: {
+                    height: "max(35px, 50px)",
+                    outline: "1px solid gray",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "5px",
+                    "& svg": { color: "#007bff", fontSize: "2rem" },
+                    "&:hover": { outline: "1px solid darkgray" },
+                  },
+                },
+                required: true,
+              },
+            }}
+          />
+        ) : (
+          <DesktopDatePicker
+            value={selectedDate}
+            onChange={setSelectedDate}
+            minDate={new Date()}
+            maxDate={new Date(Date.now() + 7 * 86400000)}
+            slotProps={{
+              textField: {
+                InputProps: {
+                  sx: {
+                    height: "35px",
+                    outline: "1px solid gray",
+                    border: "none",
+                    color: "#fff",
+                    borderRadius: "5px",
+                    "& svg": { color: "#007bff", fontSize: "2rem" },
+                    "&:hover": { outline: "1px solid darkgray" },
+                  },
+                },
+                required: true,
+              },
+            }}
+          />
+        )}
+      </div>
+
+      {/* Passengers */}
+      <div className="form-group">
+        <label>
+          <FaUser className="icon" /> Passengers
+        </label>
+        <div className="passenger-control">
+          <button
+            type="button"
+            disabled={passengers <= 1}
+            className="passenger-button"
+            onClick={() => setPassengers((p) => Math.max(1, p - 1))}
+          >
+            -
+          </button>
+          <input value={passengers} readOnly />
+          <button
+            type="button"
+            className="passenger-button"
+            disabled={passengers >= 50}
+            onClick={() => setPassengers((p) => p + 1)}
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      {/* Search Button for All Views */}
+      <Button type="submit" variant="contained" fullWidth={isMobile} sx={{ mt: 2 }} disabled={loading}>
+        {loading ? <CircularProgress size={20} color="inherit" /> : "Search"}
+      </Button>
+    </form>
+  );
+
   return (
     <div className="available-search">
-      <h1>Elevate Your Travel in Cameroon</h1>
-      <p>
-        Experience a premium travel experience across Cameroon’s bustling cities and scenic landscapes.
-      </p>
-      <Button variant="contained" onClick={handleOpen}>
-        Search Ride
-      </Button>
-      {isMobile && (
-        <Modal 
-        open={open} 
-        onClose={handleClose} 
-        aria-labelledby="modal-search-title" 
-        aria-describedby="modal-search-description"
-        className='modal'
-      >
-        <Box sx={modalStyle}>
-          <Typography id="modal-search-title" variant="h6" component="h2" sx={{ mb: 2, color:"#fff" }}>
-            Search Available Rides
-          </Typography>
-        <form onSubmit={handleSearch} className="search-form">
-          {/* Pickup Input */}
-          <div className="form-group pickup">
-            <label>Pickup <FaLocationArrow /></label><br/>
-            <input
-              value={pickup}
-              onChange={(e) => setPickup(e.target.value)}
-              onFocus={() => setShowPickupSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowPickupSuggestions(false), 200)}
-              onKeyDown={(e) => handleKeyDown(e, null, pickupIndex, setPickupIndex, suggestions)}
-              placeholder="Enter pickup location"
-              required
-            />
-            {showPickupSuggestions && suggestions.length > 0 && (
-              <ul className="suggestions-list">
-                {suggestions.map((s, i) => (
-                  <li
-                    key={s.id}
-                    className={i === pickupIndex ? 'active' : ''}
-                    onClick={() => handleSuggestionSelect(s.desc, setPickup)}
-                  >
-                    {s.desc}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          {/* Swap Icon */}
-          <div className="exchange-icon" onClick={handleSwap}><FaExchangeAlt style={{marginTop:"30px", marginLeft:"-50px"}}/></div>
-          {/* Destination Input */}
-          <div className="form-group destination">
-            <label>Destination <FaLocationArrow /></label><br/>
-            <input
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              onFocus={() => setShowDestinationSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 200)}
-              onKeyDown={(e) => handleKeyDown(e, null, destIndex, setDestIndex, destinationSuggestions)}
-              placeholder="Enter destination"
-              required
-            />
-            {showDestinationSuggestions && destinationSuggestions.length > 0 && (
-              <ul className="suggestions-list">
-                {destinationSuggestions.map((s, i) => (
-                  <li
-                    key={s.id}
-                    className={i === destIndex ? 'active' : ''}
-                    onClick={() => handleSuggestionSelect(s.desc, setDestination)}
-                  >
-                    {s.desc}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          {/* Date Picker */}
-          <div className="form-group date2">
-          <label>Preferred Date <FaCalendar /></label><br/>
-          {isMobileView ? (
-            <MobileDatePicker
-              label="Select date"
-              className='date-picker'
-              views={['year', 'month', 'day']}
-              inputFormat="dd/MM/yyyy"
-              mask="__ / __ / ____"
-              disablePast
-              PopperProps={{ placement: 'bottom-start' }}
-              componentsProps={{ actionBar: { actions: ['clear', 'accept'] } }}
-               slotProps={{
-                  textField: {
-                    InputProps: {
-                      sx: {
-                        height: '40px',
-                        outline: '1px solid gray',
-                        border:'none',
-                        color: '#fff',
-                        borderRadius: '5px',
-                        '& svg': { color: '#ccc' },
-                        '&:hover': { outline: '1px solid darkgray' },
-                      },
-                    },
-                  },
-                }}              
-              components={{ ActionBar: () => null }}
-              renderDay={(day, selectedDate, isInCurrentMonth, dayComponent) => {
-                const isSelected = selectedDate && day.getDate() === selectedDate.getDate() && day.getMonth() === selectedDate.getMonth() && day.getFullYear() === selectedDate.getFullYear();
-                return (
-                  <div className={`day ${isSelected ? 'selected' : ''}`}>
-                    {dayComponent}
-                  </div>
-                );
+      {isMobile ? (
+        <>
+          <h1>Elevate Your Travel in Cameroon</h1>
+          <p>Experience a premium travel experience across Cameroon’s cities and scenic landscapes.</p>
+          <div className="searchRide-button">
+            <Button
+              variant="contained"
+              onClick={handleOpen}
+              disabled={loading}
+              sx={{
+                width: "100%",
+                bgcolor: "rgb(21, 57, 112)",
+                borderRadius: "30px",
+                placeSelf: "center",
+                height: "50px",
+                fontSize: "1.2rem",
               }}
-              value={selectedDate}
-              onChange={(newDate) => setSelectedDate(newDate)}
-              minDate={new Date()}
-              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
-            />
-          ) : (
-            <DesktopDatePicker
-              label="Select date"
-              className='date-picker'
-              views={['year', 'month', 'day']}
-              value={selectedDate}
-              onChange={setSelectedDate}
-              minDate={new Date()}
-              maxDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)}
-              slotProps={{
-                  textField: {
-                    InputProps: {
-                      sx: {
-                        height: '40px',
-                        outline: '1px solid gray',
-                        border:'none',
-                        color: '#fff',
-                        borderRadius: '5px',
-                        '& svg': { color: '#ccc' },
-                        '&:hover': { outline: '1px solid darkgray' },
-                      },
-                    },
-                  },
-                }}              
-                />
-          )}
-        </div>      
-          {/* Passengers */}
-          <div className="form-group passengers">
-            <label>Passengers <FaUser /></label><br/>
-            <div className="passenger-input">
-              <button type="button" onClick={() => setPassengers(p => Math.max(1, p - 1))}>-</button>
-              <input value={passengers} readOnly />
-              <button type="button" onClick={() => setPassengers(p => p + 1)}>+</button>
-            </div>
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Search Ride"}
+            </Button>
           </div>
-          {/* Submit */}
-          <button
-            type="submit"
-            className="btn-submit"
-            disabled={loading}               
-          >
-            {loading
-              ? <CircularProgress size={20} color="inherit" />   
-              : 'Search'
-            }
-          </button>        
-          </form>          
-          <Button 
-            variant="contained" 
-            fullWidth 
-            onClick={handleClose} 
-            sx={{ mt: 2 }}
-          >
-            Close
-          </Button>
+          <Modal open={open} onClose={handleClose}>
+            <Box sx={formModalStyle}>
+              <hr style={{ width: "40%", placeSelf:"center", border: "1px solid #2cf", marginTop:"-20px", marginBottom: "30px" }} />
+              <Typography variant="h6" sx={{ color: "#2cf", fontWeight: "600", mb: 2, fontSize: "25px", textAlign: "center" }}>
+                Search Available Rides
+              </Typography>
+              {SearchForm}
+              <Button fullWidth sx={{ mt: 2 }} variant="outlined" onClick={handleClose}>
+                Close
+              </Button>
+            </Box>
+          </Modal>
+        </>
+      ) : (
+        SearchForm
+      )}
+
+      {/* Map Modal */}
+      <Modal open={mapOpen} onClose={handleMapClose}>
+        <Box sx={mapModalStyle}>
+          <Box sx={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}>
+            <IconButton onClick={handleMapClose} sx={{ color: "#ccc", backgroundColor: "rgba(0,0,0,0.5)", position:"relative", bottom:0, borderRadius: "50%" }}>
+              <FaArrowLeft size={24} />
+            </IconButton>
+          </Box>
+
+          {isLoaded && !loadError ? (
+            <GoogleMap
+              mapContainerStyle={{ width: "100%", height: "100%" }}
+              center={mapCenter}
+              zoom={14}
+              onClick={handleMapClick}
+            >
+              {mapPosition && <Marker position={mapPosition} />}
+            </GoogleMap>
+          ) : (
+            <Box sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <CircularProgress color="inherit" />
+            </Box>
+          )}
+
+          <Box sx={{ position: "absolute", bottom: 0, width: "100%", bgcolor: "rgba(0,0,0,0.6)", p: 2 }}>
+            <Typography sx={{ color: "#fff", mb: 1 }}>
+              {mapField === "pickup" ? pickup : destination}
+            </Typography>
+            <Button variant="contained" fullWidth onClick={handleMapClose}>
+              Done
+            </Button>
+          </Box>
         </Box>
       </Modal>
-      )}
     </div>
   );
-};
-
-export default SearchAvailable;
+}

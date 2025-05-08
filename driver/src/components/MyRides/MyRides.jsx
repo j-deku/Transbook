@@ -27,6 +27,7 @@ export default function MyRides() {
           date: ride.selectedDate,
           time: ride.selectedTime,
           price: ride.price,
+          currency: ride.currency,
           seats: ride.passengers,
           type: ride.type,
           status: ride.status,
@@ -53,11 +54,15 @@ export default function MyRides() {
     {
       field: "price",
       headerName: "Price",
-      width: 100,
-      // Remove valueGetter/valueFormatter altogether…
+      width: 130,
       renderCell: (params) => {
-        const val = params.row?.price
-        return val != null ? `$${val}` : ""
+        const { price, currency } = params.row;
+        if (price == null) return "";
+        // Always show price, prefix with currency if available
+        const formattedPrice = parseFloat(price).toFixed(2);
+        return currency
+          ? `${currency} ${formattedPrice}`
+          : formattedPrice;
       },
     },
     { field: "seats", headerName: "Seats", width: 100 },
