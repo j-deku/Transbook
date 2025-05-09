@@ -31,12 +31,12 @@ const SearchArchive = () => {
   };
 
   if (archives.length === 0) {
-    return <p className="archive-empty">No upcoming searches found.</p>;
+    return <p className="archive-empty">No previous searches found.</p>;
   }
 
   return (
     <div className="search-archive">
-      <h3>Upcoming Searches</h3>
+      <h3>Your Searches</h3>
       <ul>
         {archives.map((archive, index) => (
           <li key={index} onClick={() => handleArchiveClick(archive)}>
