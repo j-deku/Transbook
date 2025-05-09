@@ -63,6 +63,24 @@ const getRideById = async (req, res) => {
   }
 };
 
+const deleteRide = async (req, res) => {
+ try {
+   const ride = await RideModel.findById(req.params.id);
+   if (!ride) {
+     return res.status(404).json({ success: false, message: "Ride not found" });
+   }
+   // ensure it belongs to this driver
+   if (ride.driver.toString() !== req.driver._id.toString()) {
+     return res.status(403).json({ success: false, message: "Unauthorized" });
+   }
+   await ride.deleteOne();
+   return res.json({ success: true, message: "Ride deleted" });
+ } catch (err) {
+   console.error("Error deleting ride:", err);
+   return res.status(500).json({ success: false, message: "Server error" });
+ }
+};
+
 const updateRide = async (req, res) => {
   try {
     const rideId = req.params.id;
@@ -1000,6 +1018,7 @@ const getPendingRideRequests = async (req, res) => {
 export { 
   getDriverRides, 
   getRideById,
+  deleteRide,
   updateRide,
   updateRideStatusDriver, 
   updateDriverProfile, 

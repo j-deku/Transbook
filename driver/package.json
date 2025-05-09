@@ -14,29 +14,29 @@
         "@mui/material/react": "^19.0.0",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0"
-      },
+    },
     "overrides": {
         "react-google-places-autocomplete": {
-        "react": "$react",
-        "react-dom": "$react"
-    },
-    "antd": {
-        "react": "$react",
-        "react-dom": "$react"
-    },
+            "react": "$react",
+            "react-dom": "$react"
+        },
+        "antd": {
+            "react": "$react",
+            "react-dom": "$react"
+        },
         "@mui/lab": {
-          "react": "$react",
-          "react-dom": "$react"
+            "react": "$react",
+            "react-dom": "$react"
         },
         "@mui/material": {
-          "react": "$react",
-          "react-dom": "$react"
+            "react": "$react",
+            "react-dom": "$react"
         },
         "@mui/icons-material": {
-          "react": "$react",
-          "react-dom": "$react"
+            "react": "$react",
+            "react-dom": "$react"
         }
-      },
+    },
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
@@ -48,11 +48,13 @@
         "@mui/lab": "^6.0.0-beta.30",
         "@mui/material": "^6.4.3",
         "@mui/x-data-grid": "^7.28.3",
+        "@mui/x-date-pickers": "^8.3.0",
         "@react-google-maps/api": "^2.20.5",
         "@tanstack/react-query": "^5.74.4",
         "antd": "^5.24.7",
         "axios": "^1.7.9",
         "chart.js": "^4.4.7",
+        "date-fns": "^4.1.0",
         "firebase": "^11.5.0",
         "formik": "^2.4.6",
         "howler": "^2.2.4",

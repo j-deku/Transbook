@@ -4,8 +4,11 @@ import "./CreateRide.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Button, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import { StoreContext } from "../../context/StoreContext";
+import { Button, Select, MenuItem, InputLabel, FormControl, TextField, Box } from "@mui/material";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import {
   Dialog,
@@ -13,18 +16,17 @@ import {
   DialogContent,
   DialogActions,
   Typography,
-  Box,
 } from "@mui/material";
+import { StoreContext } from "../../context/StoreContext";
 
 const currencyOptions = [
   { code: "USD", label: "US Dollar" },
   { code: "EUR", label: "Euro" },
-  { code: "CFA", label: "CFA franc"},
-  { code: "GHC", label: "Ghana Cedi"},
+  { code: "CFA", label: "CFA franc" },
+  { code: "GHC", label: "Ghana Cedi" },
   { code: "GBP", label: "British Pound" },
   { code: "NGN", label: "Nigerian Naira" },
   { code: "KES", label: "Kenyan Shilling" },
-  // …add as many as you support
 ];
 
 const initialState = {
@@ -33,8 +35,8 @@ const initialState = {
   price: "",
   currency: "USD",
   description: "",
-  selectedDate: "",
-  selectedTime: "",
+  selectedDate: null,
+  selectedTime: null,
   passengers: 1,
   image: null,
   type: "",
@@ -77,23 +79,38 @@ const CreateRide = () => {
     if (!validateForm()) return;
 
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
+    // Append all non-date/time fields
+    const { selectedDate, selectedTime, ...rest } = data;
+    Object.entries(rest).forEach(([key, value]) => {
       if (key === "image" && value) {
         formData.append(key, value, value.name);
       } else {
         formData.append(key, value);
       }
     });
+    // Format and append date/time fields
+    formData.append(
+      'selectedDate',
+      selectedDate.toISOString().split('T')[0]
+    );
+    formData.append(
+      'selectedTime',
+      selectedTime.toTimeString().slice(0, 5)
+    );
 
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const resp = await axios.post(`${url}/api/driver/add`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const resp = await axios.post(
+        `${url}/api/driver/add`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       if (resp.data.success) {
         setCreatedRide(resp.data.ride);
         setShowModal(true);
@@ -157,7 +174,7 @@ const CreateRide = () => {
             />
           </div>
           <div className="form-group">
-            <FormControl fullWidth required>
+            <FormControl fullWidth required sx={{ mt: 2 }}>
               <InputLabel>Currency</InputLabel>
               <Select
                 name="currency"
@@ -201,29 +218,41 @@ const CreateRide = () => {
               <option value="motorcycle">Motor</option>
             </select>
           </div>
-          <div className="form-group">
-            <label>Date</label>
-            <input
-              type="date"
-              name="selectedDate"
-              value={data.selectedDate}
-              onChange={onChangeHandler}
-              required
-            />
-          </div>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <div className="form-group">
+              <DatePicker
+                label="Date"
+                value={data.selectedDate}
+                sx={{ mt: 2 }}
+                onChange={(newDate) =>
+                  setData((prev) => ({ ...prev, selectedDate: newDate }))
+                }
+                renderInput={(params) => <TextField {...params} fullWidth required />}
+                slotProps={{
+                  textField: { required: true },
+                }}
+              />
+            </div>
+          </LocalizationProvider>
         </div>
 
         <div className="form-group-inline">
-          <div className="form-group">
-            <label>Time</label>
-            <input
-              type="time"
-              name="selectedTime"
-              value={data.selectedTime}
-              onChange={onChangeHandler}
-              required
-            />
-          </div>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <div className="form-group">
+              <TimePicker
+                label="Time"
+                value={data.selectedTime}
+                sx={{ mt: 2 }}
+                onChange={(newTime) =>
+                  setData((prev) => ({ ...prev, selectedTime: newTime }))
+                }
+                renderInput={(params) => <TextField {...params} fullWidth required />}
+                slotProps={{
+                  textField: { required: true },
+                }}
+              />
+            </div>
+          </LocalizationProvider>
           <div className="form-group">
             <label>Image</label>
             <input
@@ -237,12 +266,14 @@ const CreateRide = () => {
           </div>
         </div>
 
-         <Button
+        <Button
           type="submit"
           variant="contained"
           color="primary"
           disabled={loading}
-          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+          startIcon={
+            loading ? <CircularProgress size={20} color="inherit" /> : null
+          }
         >
           {loading ? "ADDING..." : "ADD RIDE"}
         </Button>
@@ -257,7 +288,7 @@ const CreateRide = () => {
               <img
                 src={createdRide.imageUrl}
                 alt="Ride"
-                style={{ width: "100%", height:"400px", borderRadius: 8 }}
+                style={{ width: "100%", height: "400px", borderRadius: 8 }}
               />
             </Box>
             <Typography variant="subtitle1">

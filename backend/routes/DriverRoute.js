@@ -1,5 +1,5 @@
 import express from "express";
-import { cancelRide, completeRide, driverRespondToRide, getCurrentRide, getCurrentRides, getDriverEarnings, getDriverEarningsReport, getDriverHistory, getDriverRating, getPendingRideRequests, getPerformanceMetrics, getUpcomingRides, loginDriver, registerDriver, addRide, startRide, submitSupportRequest, updateDriverProfile, updateRideFare, updateRideStatusDriver, getDriverRides, forgotPassword, resetPassword, updateRide, getRideById } from "../controllers/DriverController.js";
+import { cancelRide, completeRide, driverRespondToRide, getCurrentRide, getCurrentRides, getDriverEarnings, getDriverEarningsReport, getDriverHistory, getDriverRating, getPendingRideRequests, getPerformanceMetrics, getUpcomingRides, loginDriver, registerDriver, addRide, startRide, submitSupportRequest, updateDriverProfile, updateRideFare, updateRideStatusDriver, getDriverRides, forgotPassword, resetPassword, updateRide, getRideById, deleteRide } from "../controllers/DriverController.js";
 import driverAuth from "../middlewares/driverAuth.js";
 import upload from '../config/Multer.js'
 
@@ -14,6 +14,7 @@ driverRouter.use(driverAuth);  // Apply driverAuth middleware to all routes
 driverRouter.post("/add",  upload.single("image"), addRide);
 driverRouter.get("/rides", getDriverRides);
 driverRouter.get("/rides/:id", getRideById);
+driverRouter.delete("/rides/:id", deleteRide);
 driverRouter.put("/rides/:id", upload.single("image"), updateRide);
 driverRouter.post("/ride/status", updateRideStatusDriver);
 driverRouter.get("/current-ride", getCurrentRide);

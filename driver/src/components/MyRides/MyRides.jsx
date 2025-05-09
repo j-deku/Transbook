@@ -1,26 +1,28 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import { Box, Button } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Button, Dialog, DialogTitle, DialogActions } from "@mui/material";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
 import { StoreContext } from "../../context/StoreContext";
 
-export default function MyRides() {
+const MyRides = () => {
   const { url } = useContext(StoreContext);
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [rideToDelete, setRideToDelete] = useState(null);
 
-  // Fetch the driver’s rides from backend
   const fetchRides = useCallback(async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const resp = await axios.get(`${url}/api/driver/rides`, {
+      const { data } = await axios.get(`${url}/api/driver/rides`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("🚀 rides from server:", resp.data.rides);
       setRides(
-        resp.data.rides.map((ride) => ({
+        data.rides.map((ride) => ({
           id: ride._id,
           pickup: ride.pickup,
           destination: ride.destination,
@@ -33,19 +35,40 @@ export default function MyRides() {
           status: ride.status,
         }))
       );
-    } catch (err) {
-      console.error("Error fetching rides:", err);
+    } catch (error) {
+      console.error("Error fetching rides:", error);
     } finally {
       setLoading(false);
     }
   }, [url]);
 
-  // Initial load & refresh after creation
   useEffect(() => {
     fetchRides();
   }, [fetchRides]);
 
-  // Define columns for the grid
+  // Open confirmation dialog
+  const confirmDelete = (id) => {
+    setRideToDelete(id);
+    setOpenDialog(true);
+  };
+
+  // Delete ride and update state
+  const handleDelete = async () => {
+    if (!rideToDelete) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${url}/api/driver/rides/${rideToDelete}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRides((prev) => prev.filter((r) => r.id !== rideToDelete));
+    } catch (error) {
+      console.error("Error deleting ride:", error);
+    } finally {
+      setOpenDialog(false);
+      setRideToDelete(null);
+    }
+  };
+
   const columns = [
     { field: "pickup", headerName: "Pickup", flex: 1 },
     { field: "destination", headerName: "Destination", flex: 1 },
@@ -55,37 +78,39 @@ export default function MyRides() {
       field: "price",
       headerName: "Price",
       width: 130,
-      renderCell: (params) => {
-        const { price, currency } = params.row;
+      renderCell: ({ row }) => {
+        const { price, currency } = row;
         if (price == null) return "";
-        // Always show price, prefix with currency if available
-        const formattedPrice = parseFloat(price).toFixed(2);
-        return currency
-          ? `${currency} ${formattedPrice}`
-          : formattedPrice;
+        const formatted = parseFloat(price).toFixed(2);
+        return currency ? `${currency} ${formatted}` : formatted;
       },
     },
     { field: "seats", headerName: "Seats", width: 100 },
     { field: "type", headerName: "Type", width: 120 },
     { field: "status", headerName: "Status", width: 120 },
     {
-      field: "actions",
-      headerName: "Actions",
-      width: 150,
-      sortable: false,
-      renderCell: ({ row }) => (
-        <Button
-          size="small"
-          onClick={() => window.location.href = `/driver/edit-ride/${row.id}`}
-        >
-          Edit
-        </Button>
-      ),
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 120,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          onClick={() => window.location.href = `/driver/edit-ride/${params.id}`}
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={() => confirmDelete(params.id)}
+          showInMenu={false}
+        />
+      ],
     },
   ];
 
   return (
-    <Box sx={{ height: 600, width: "100%", mt: 4 }}>
+    <Box sx={{ height: 600, width: '100%', mt: 4 }}>
       <DataGrid
         rows={rides}
         columns={columns}
@@ -96,6 +121,16 @@ export default function MyRides() {
         pagination
         disableSelectionOnClick
       />
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button color="error" onClick={handleDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
-}
+};
+
+export default MyRides;
