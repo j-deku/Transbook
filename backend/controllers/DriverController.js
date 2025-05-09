@@ -104,6 +104,7 @@ const updateRide = async (req, res) => {
       "pickup",
       "destination",
       "price",
+      "currency",
       "description",
       "selectedDate",
       "selectedTime",

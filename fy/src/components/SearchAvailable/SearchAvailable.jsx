@@ -58,38 +58,55 @@ export default function SearchAvailable() {
     libraries,
   });
 
+  const [pickAuto, setPickAuto] = useState(null);
+  const [destAuto, setDestAuto] = useState(null);
+
   // Form Modal
+  // Modal visibility
   const [open, setOpen] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
+  // Fields
+  const [pickup, setPickup] = useState("");
+  const [destination, setDestination] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [passengers, setPassengers] = useState(1);
+  const [pickupCoords, setPickupCoords] = useState(null);
+  const [destCoords, setDestCoords] = useState(null);
+  const [mapField, setMapField] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 3.8480, lng: 11.5021 });
+  const [mapPosition, setMapPosition] = useState(null);
+
+  // Loading states
+  const [fetchingLocation, setFetchingLocation] = useState(false);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+
   const handleOpen = () => {
-    if (navigator.geolocation) {
+    if (!pickupCoords && navigator.geolocation) {
+      setFetchingLocation(true);
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
           const geocoder = new window.google.maps.Geocoder();
           const latlng = { lat: coords.latitude, lng: coords.longitude };
           geocoder.geocode({ location: latlng }, (results, status) => {
             if (status === "OK" && results.length) {
-              const human =
-                results.find((r) => !r.types.includes("plus_code")) ||
-                results[0];
+              const human = results.find((r) => !r.types.includes("plus_code")) || results[0];
               setPickup(human.formatted_address);
               setPickupCoords(latlng);
             }
+            setFetchingLocation(false);
             setOpen(true);
           });
         },
-        () => setOpen(true)
+        () => {
+          setFetchingLocation(false);
+          setOpen(true);
+        }
       );
     } else {
       setOpen(true);
     }
   };  
   const handleClose = () => setOpen(false);
-
-  // Map Modal
-  const [mapOpen, setMapOpen] = useState(false);
-  const [mapField, setMapField] = useState(null); // "pickup" or "destination"
-  const [mapCenter, setMapCenter] = useState({ lat: 3.8480, lng: 11.5021 });
-  const [mapPosition, setMapPosition] = useState(null);
 
   const handleMapOpen = (field) => {
     setMapField(field);
@@ -111,7 +128,7 @@ export default function SearchAvailable() {
         if (mapField === "pickup") {
           setPickup(addressObj.formatted_address);
           setPickupCoords(latlng);
-        } else if (mapField === "destination") {
+        } else {
           setDestination(addressObj.formatted_address);
           setDestCoords(latlng);
         }
@@ -120,22 +137,8 @@ export default function SearchAvailable() {
     });
   };
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
-
-  const [pickup, setPickup] = useState("");
-  const [destination, setDestination] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [passengers, setPassengers] = useState(1);
-
-  const [pickAuto, setPickAuto] = useState(null);
-  const [destAuto, setDestAuto] = useState(null);
-
-  const [pickupCoords, setPickupCoords] = useState(null);
-  const [destCoords, setDestCoords] = useState(null);
-
   const updateCoords = (place, setter) => {
+    if (!place) return;
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address: place }, (results, status) => {
       if (status === "OK" && results[0]) {
@@ -144,15 +147,27 @@ export default function SearchAvailable() {
     });
   };
 
+  const handleSwap = () => {
+    setPickup(destination);
+    setDestination(pickup);
+    setPickupCoords(destCoords);
+    setDestCoords(pickupCoords);
+  };
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+
   const options = { fields: ["formatted_address", "geometry"], strictBounds: false };
 
   const onPickLoad = (auto) => setPickAuto(auto);
   const onPickPlaceChanged = () => {
     const place = pickAuto?.getPlace();
-    if (place?.formatted_address) setPickup(place.formatted_address);
-    updateCoords(place.formatted_address, setPickupCoords);
+    if (place?.formatted_address) {
+      setPickup(place.formatted_address);
+      setPickupCoords(place.geometry.location.toJSON());
+    }
   };
-
   const onDestLoad = (auto) => setDestAuto(auto);
   const onDestPlaceChanged = () => {
     const place = destAuto?.getPlace();
@@ -160,16 +175,10 @@ export default function SearchAvailable() {
     updateCoords(place.formatted_address, setDestCoords);
   };
 
-  const handleSwap = () => {
-    setPickup(destination);
-    setDestination(pickup);
-  };
-
-  const [loading, setLoading] = useState(false);
   const handleSearch = (e) => {
     e.preventDefault();
-    if (loading) return;
-    setLoading(true);
+    if (loadingSearch) return;
+    setLoadingSearch(true);
     const rawPick = pickup.split(",")[0].trim();
     const rawDest = destination.split(",")[0].trim();
     const payload = {
@@ -181,7 +190,7 @@ export default function SearchAvailable() {
     const archives = JSON.parse(localStorage.getItem("searchArchives") || "[]");
     archives.unshift(payload);
     localStorage.setItem("searchArchives", JSON.stringify(archives));
-    handleClose();
+    setOpen(false);
     navigate("/searchRides", { state: payload });
   };
 
@@ -339,8 +348,14 @@ export default function SearchAvailable() {
       </div>
 
       {/* Search Button for All Views */}
-      <Button type="submit" variant="contained" fullWidth={isMobile} sx={{ mt: 2 }} disabled={loading}>
-        {loading ? <CircularProgress size={20} color="inherit" /> : "Search"}
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth={isMobile}
+        sx={{ mt: 2 }}
+        disabled={loadingSearch}
+      >
+        {loadingSearch ? <CircularProgress size={20} color="inherit" /> : "Search"}
       </Button>
     </form>
   );
@@ -355,7 +370,7 @@ export default function SearchAvailable() {
             <Button
               variant="contained"
               onClick={handleOpen}
-              disabled={loading}
+              disabled={fetchingLocation}
               sx={{
                 width: "100%",
                 bgcolor: "rgb(21, 57, 112)",
@@ -365,7 +380,7 @@ export default function SearchAvailable() {
                 fontSize: "1.2rem",
               }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : "Search Ride"}
+              {fetchingLocation ? <CircularProgress size={24} color="inherit" /> : "Search Ride"}
             </Button>
           </div>
           <Modal open={open} onClose={handleClose}>

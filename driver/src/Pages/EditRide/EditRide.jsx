@@ -1,138 +1,368 @@
 // EditRide.jsx
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
-import "./EditRide.css";
-import { StoreContext } from "../../context/StoreContext";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import {
+  Box,
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { StoreContext } from "../../context/StoreContext";
+import axiosInstance from "../../../axiosInstance";
+import "./EditRide.css";
+
+const vehicleTypes = [
+  { value: "bus", label: "Bus" },
+  { value: "car", label: "Van" },
+  { value: "motorcycle", label: "Motor" },
+];
+
+const rideStatuses = [
+  { value: "scheduled", label: "Scheduled" },
+  { value: "cancelled", label: "Cancelled" },
+  { value: "completed", label: "Completed" },
+];
+
+const currencyOptions = [
+  { code: "USD", label: "US Dollar" },
+  { code: "EUR", label: "Euro" },
+  { code: "CFA", label: "CFA franc" },
+  { code: "GHC", label: "Ghana Cedi" },
+  { code: "GBP", label: "British Pound" },
+  { code: "NGN", label: "Nigerian Naira" },
+  { code: "KES", label: "Kenyan Shilling" },
+];
 
 const EditRide = () => {
   const { rideId } = useParams();
   const navigate = useNavigate();
   const { url } = useContext(StoreContext);
-
   const [data, setData] = useState({
     pickup: "",
     destination: "",
     price: "",
+    currency: "USD",
     description: "",
-    selectedDate: "",
-    selectedTime: "",
+    selectedDate: null,
+    selectedTime: null,
     passengers: 1,
-    image: null,
     type: "",
     status: "",
+    imageFile: null,
   });
   const [existingImageUrl, setExistingImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchRide = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem("token");
-        const resp = await axios.get(`${url}/api/driver/rides/${rideId}`, { headers: { Authorization: `Bearer ${token}` } });
+        const resp = await axiosInstance.get(
+          `${url}/api/driver/rides/${rideId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         if (resp.data.success) {
-          const { ride } = resp.data;
+          const r = resp.data.ride;
           setData({
-            pickup: ride.pickup,
-            destination: ride.destination,
-            price: ride.price,
-            description: ride.description,
-            selectedDate: ride.selectedDate.split('T')[0],
-            selectedTime: ride.selectedTime,
-            passengers: ride.passengers,
-            image: null,
-            type: ride.type,
-            status: ride.status,
+            pickup: r.pickup,
+            destination: r.destination,
+            price: r.price,
+            currency: r.currency || "USD",
+            description: r.description,
+            selectedDate: new Date(r.selectedDate),
+            selectedTime: new Date(`1970-01-01T${r.selectedTime}`),
+            passengers: r.passengers,
+            type: r.type,
+            status: r.status,
+            imageFile: null,
           });
-          setExistingImageUrl(ride.imageUrl);
+          setExistingImageUrl(r.imageUrl || "");
+        } else {
+          toast.error(resp.data.message || "Ride not found");
+          navigate("/dashboard");
         }
       } catch (err) {
-        toast.error("Failed to load ride");
-        console.error("Error fetching ride:", err.response?.data || err.message);
+        console.error("Error fetching ride:", err);
+        toast.error("Failed to load ride details");
+        navigate("/dashboard");
+      } finally {
+        setLoading(false);
       }
     };
     fetchRide();
-  }, [rideId, url]);
+  }, [rideId, url, navigate]);
 
   const handlePlaceChange = (val, field) => {
     setData(prev => ({ ...prev, [field]: val ? val.label : "" }));
   };
-  const onChange = (e) => {
+
+  const handleChange = e => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
-    const onFileChange = (e) => {
-    setData(prev => ({ ...prev, image: e.target.files[0] }));
+
+  const handleFileChange = e => {
+    const file = e.target.files[0];
+    setData(prev => ({ ...prev, imageFile: file }));
   };
 
   const validateForm = () => {
-    const { pickup, destination, price, description, selectedDate, selectedTime, type, status } = data;
-    if (!pickup || !destination || !price || !description || !selectedDate || !selectedTime || !type || !status) {
+    const {
+      pickup,
+      destination,
+      price,
+      currency,
+      description,
+      selectedDate,
+      selectedTime,
+      type,
+      status,
+    } = data;
+    if (
+      !pickup ||
+      !destination ||
+      !price ||
+      !currency ||
+      !description ||
+      !selectedDate ||
+      !selectedTime ||
+      !type ||
+      !status
+    ) {
       toast.error("All fields must be filled");
       return false;
     }
     return true;
   };
 
-  const onSubmit = async (e) => {
+  const onSubmit = async e => {
     e.preventDefault();
     if (!validateForm()) return;
+
     const formData = new FormData();
     Object.entries(data).forEach(([k, v]) => {
-      if (k === "image" && v) formData.append("image", v, v.name);
-      else if (k !== "image") formData.append(k, v);
-    });
-    try {
-      const token = localStorage.getItem("token");
-      const resp = await axios.put(`${url}/api/driver/rides/${rideId}`, formData, { headers: { Authorization: `Bearer ${token}` } });
-      if (resp.data.success) {
-        toast.success("Ride updated");
-        navigate('/dashboard');
+      if (k === "imageFile" && v) {
+        formData.append("image", v, v.name);
+      } else if (k !== "imageFile") {
+        formData.append(k, v);
       }
-    } catch {
+    });
+    // format date/time
+    formData.set(
+      "selectedDate",
+      data.selectedDate.toISOString().split("T")[0]
+    );
+    formData.set(
+      "selectedTime",
+      data.selectedTime.toTimeString().slice(0, 5)
+    );
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const resp = await axiosInstance.put(
+        `${url}/api/driver/rides/${rideId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (resp.data.success) {
+        toast.success("Ride updated successfully");
+        navigate("/dashboard");
+      } else {
+        toast.error(resp.data.message);
+      }
+    } catch (err) {
+      console.error("Error updating ride:", err);
       toast.error("Update failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="create-ride">
-      <h1>Edit Ride</h1>
-      <form onSubmit={onSubmit} className="create-ride-form">
-        <div className="form-group">
-          <label>Pickup Location</label>
-          <GooglePlacesAutocomplete
-            apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-            selectProps={{
-              value: data.pickup ? { label: data.pickup, value: data.pickup } : null,
-              onChange: (val) => handlePlaceChange(val, 'pickup'),
-            }}
-          />
-        </div>
-        <div className="form-group">
-          <label>Destination</label>
-          <GooglePlacesAutocomplete
-            apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-            selectProps={{
-              value: data.destination ? { label: data.destination, value: data.destination } : null,
-              onChange: (val) => handlePlaceChange(val, 'destination'),
-            }}
-          />
-        </div>
-        {/* ...other inputs same as CreateRide, including existing image preview and status select... */}
-        {existingImageUrl && (
-          <div className="form-group">
-            <label>Current Image</label>
-            <img src={existingImageUrl} alt="ride" style={{ width: '100%', maxHeight: 200, objectFit: 'cover' }} />
-          </div>
-        )}
-        <div className="form-group">
-          <label>Replace Image (optional)</label>
-          <input type="file" name="image" accept="image/*" onChange={onFileChange} />
-        </div>
-        <button type="submit" className="btn-submit">UPDATE RIDE</button>
-      </form>
-    </div>
+    <Box className="edit-ride" sx={{ maxWidth: 600, mx: "auto", mt: 18 }}>
+      <Typography variant="h4" gutterBottom>
+        Edit Ride
+      </Typography>
+
+      {loading ? (
+        <Box textAlign="center" mt={30}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box component="form" onSubmit={onSubmit} display="grid" gap={2}>
+          <FormControl fullWidth>
+            <Typography>Pickup Location</Typography>
+            <GooglePlacesAutocomplete
+              apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+              selectProps={{
+                value: data.pickup ? { label: data.pickup } : null,
+                onChange: val => handlePlaceChange(val, "pickup"),
+                placeholder: "Enter pickup location",
+              }}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Typography>Destination</Typography>
+            <GooglePlacesAutocomplete
+              apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+              selectProps={{
+                value: data.destination ? { label: data.destination } : null,
+                onChange: val => handlePlaceChange(val, "destination"),
+                placeholder: "Enter destination",
+              }}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <TextField
+              label="Price"
+              name="price"
+              type="number"
+              value={data.price}
+              onChange={handleChange}
+              required
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel>Currency</InputLabel>
+            <Select
+              name="currency"
+              value={data.currency}
+              onChange={handleChange}
+              label="Currency"
+              required
+            >
+              {currencyOptions.map(c => (
+                <MenuItem key={c.code} value={c.code}>
+                  {c.code} &ndash; {c.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <TextField
+              label="Description"
+              name="description"
+              multiline
+              rows={4}
+              value={data.description}
+              onChange={handleChange}
+              required
+            />
+          </FormControl>
+
+          <Box display="flex" gap={2}>
+            <FormControl fullWidth>
+              <InputLabel>Type</InputLabel>
+              <Select
+                name="type"
+                value={data.type}
+                onChange={handleChange}
+                label="Type"
+                required
+              >
+                {vehicleTypes.map(t => (
+                  <MenuItem key={t.value} value={t.value}>
+                    {t.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                name="status"
+                value={data.status}
+                onChange={handleChange}
+                label="Status"
+                required
+              >
+                {rideStatuses.map(s => (
+                  <MenuItem key={s.value} value={s.value}>
+                    {s.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Box display="flex" gap={2}>
+              <DatePicker
+                label="Date"
+                value={data.selectedDate}
+                onChange={newDate => setData(prev => ({ ...prev, selectedDate: newDate }))}
+                renderInput={params => <TextField {...params} fullWidth required />}
+              />
+              <TimePicker
+                label="Time"
+                value={data.selectedTime}
+                onChange={newTime => setData(prev => ({ ...prev, selectedTime: newTime }))}
+                renderInput={params => <TextField {...params} fullWidth required />}
+              />
+            </Box>
+          </LocalizationProvider>
+
+          <FormControl fullWidth>
+            <TextField
+              label="Passengers"
+              name="passengers"
+              type="number"
+              value={data.passengers}
+              onChange={handleChange}
+              inputProps={{ min: 1 }}
+              required
+            />
+          </FormControl>
+
+          {existingImageUrl && (
+            <Box>
+              <Typography>Current Image</Typography>
+              <Box component="img" src={existingImageUrl} width="100%" maxHeight={200} sx={{ objectFit: "cover", borderRadius: 1 }} />
+            </Box>
+          )}
+
+          <FormControl>
+            <Typography>Replace Image (optional)</Typography>
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+          </FormControl>
+
+          <Box textAlign="center" sx={{ mt: 5 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : null}
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </Button>
+          </Box>
+        </Box>
+      )}
+    </Box>
   );
 };
 
