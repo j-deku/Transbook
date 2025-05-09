@@ -237,7 +237,7 @@ const CreateRide = () => {
         </div>
         <div className="form-group-inline">
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <div className="form-group" className="time-picker">
+            <div className="form-group">
               <TimePicker
                 label="Time"
                 value={data.selectedTime}
