@@ -23,7 +23,7 @@
 .container .container2{
     background-color:  #F39C12;
     padding: 20px;
-    height: 480px;
+    height: 430px;
     border-radius: 50px;
     margin-left: -80px;
     margin-right: 50px;
@@ -42,6 +42,8 @@
     outline: 1px solid whitesmoke;
     color:white;
     width: 90%;
+    border: none;
+    padding: 10px;
     height: 20%;
     border-radius: 30px;
     font-size: 24px;
