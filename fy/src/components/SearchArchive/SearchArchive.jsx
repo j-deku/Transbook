@@ -1,6 +1,18 @@
+// SearchArchive.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./SearchArchive.css";
+import {
+  Box,
+  Typography,
+  List,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  Card,
+  CardContent,
+} from "@mui/material";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const SearchArchive = () => {
   const [archives, setArchives] = useState([]);
@@ -10,46 +22,68 @@ const SearchArchive = () => {
     const stored = localStorage.getItem("searchArchives");
     if (stored) {
       try {
-        const allArchives = JSON.parse(stored);
-        // Only include searches with selectedDate today or in the future
+        const all = JSON.parse(stored);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const upcoming = allArchives.filter((archive) => {
-          const date = new Date(archive.selectedDate);
-          date.setHours(0, 0, 0, 0);
-          return date >= today;
+        const upcoming = all.filter(({ selectedDate }) => {
+          const d = new Date(selectedDate);
+          d.setHours(0, 0, 0, 0);
+          return d >= today;
         });
         setArchives(upcoming);
-      } catch (error) {
-        console.error("Error parsing search archives:", error);
+      } catch (err) {
+        console.error("Error reading archives", err);
       }
     }
   }, []);
 
-  const handleArchiveClick = (archive) => {
+  const handleClick = (archive) => {
     navigate("/searchRides", { state: archive });
   };
 
-  if (archives.length === 0) {
-    return <p className="archive-empty">No previous searches found.</p>;
+  if (!archives.length) {
+    return (
+      <Card sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 2, textAlign: 'center' }}>
+        <CardContent>
+          <Typography variant="h6" color="textSecondary">
+            You have no upcoming searches.
+          </Typography>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
-    <div className="search-archive">
-      <h3>Your Searches</h3>
-      <ul>
-        {archives.map((archive, index) => (
-          <li key={index} onClick={() => handleArchiveClick(archive)}>
-            <span className="search-date">
-              {new Date(archive.selectedDate).toLocaleDateString()}
-            </span>
-            <span className="search-info">
-              {archive.pickup} &rarr; {archive.destination} ({archive.passengers} Passenger{archive.passengers > 1 ? "s" : ""})
-            </span>
-          </li>
+    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        Your Upcoming Searches
+      </Typography>
+      <List>
+        {archives.map((archive, i) => (
+          <React.Fragment key={i}>
+            <ListItemButton onClick={() => handleClick(archive)}>
+              <ListItemText
+                primary={
+                  <Typography variant="subtitle1">
+                    {archive.pickup} &rarr; {archive.destination}
+                  </Typography>
+                }
+                secondary={
+                  <>
+                    <AccessTimeIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                    {new Date(archive.selectedDate).toLocaleDateString()}
+                    {' — '}
+                    <LocationOnIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                    {archive.passengers} Passenger{archive.passengers > 1 ? 's' : ''}
+                  </>
+                }
+              />
+            </ListItemButton>
+            {i < archives.length - 1 && <Divider component="li" />}
+          </React.Fragment>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 };
 
