@@ -139,7 +139,7 @@ const SearchRides = ({ sortOption, filterOption }) => {
         <>
           {rides.length > 0 && (
             <>
-              <h2>{`${formatDate(rides[0].selectedDate)}, ${rides[0].pickup} > ${rides[0].destination}`}</h2>
+              <h2>{`${formatDate(rides[0].selectedDate)}`}, {`${rides[0].pickup}`} &rarr; {`${rides[0].destination}`}</h2>
               {rides.map((ride) => {
                 const endTime = ride.duration ? calculateEndTime(ride.selectedTime, ride.duration) : ride.selectedTime;
                 return (

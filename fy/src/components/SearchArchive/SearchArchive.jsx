@@ -46,7 +46,7 @@ const SearchArchive = () => {
       <Card sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 2, textAlign: 'center' }}>
         <CardContent>
           <Typography variant="h6" color="textSecondary">
-            You have no upcoming searches.
+            You have no recent searches.
           </Typography>
         </CardContent>
       </Card>
@@ -54,9 +54,11 @@ const SearchArchive = () => {
   }
 
   return (
+    <>
+    <hr style={{ borderBottom: '1px solid #ccc', marginBottom: '16px' }} />
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Your Upcoming Searches
+        Your Recent Searches
       </Typography>
       <List>
         {archives.map((archive, i) => (
@@ -70,10 +72,10 @@ const SearchArchive = () => {
                 }
                 secondary={
                   <>
-                    <AccessTimeIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                    <AccessTimeIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
                     {new Date(archive.selectedDate).toLocaleDateString()}
                     {' — '}
-                    <LocationOnIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                    <LocationOnIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
                     {archive.passengers} Passenger{archive.passengers > 1 ? 's' : ''}
                   </>
                 }
@@ -84,6 +86,13 @@ const SearchArchive = () => {
         ))}
       </List>
     </Box>
+    <Box sx={{ textAlign: 'center', mt: 2 }}>
+      <Typography variant="body2" color="textSecondary">
+        Click on a search to view details or modify it.
+      </Typography>
+    </Box>
+    <hr style={{ borderBottom: '1px solid #ccc', marginTop: '16px' }} />
+    </>
   );
 };
 
