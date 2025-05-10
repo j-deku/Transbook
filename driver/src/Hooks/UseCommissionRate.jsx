@@ -2,10 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import axiosInstance from '../../axiosInstance';
 import { StoreContext } from '../context/StoreContext';
 
-/**
- * Custom hook to fetch and expose the current platform commission rate.
- * Returns `null` while loading, then the numeric rate (0–1).
- */
+
 export function useCommissionRate() {
   const { url } = useContext(StoreContext);
   const [rate, setRate] = useState(null);
