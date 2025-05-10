@@ -3,7 +3,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
-import { Server } from "socket.io";
+import { Server as IOServer } from "socket.io";
 
 import corsMiddleware from "./middlewares/cors.js";
 import userRouter from "./routes/UserRoute.js";
@@ -44,10 +44,10 @@ const port = process.env.PORT || 80;
 
 // Create HTTP server & attach Socket.IO
 const server = http.createServer(app);
-export const io = new Server(server, {
-  cors: { origin: "*" },
-  transports: ["websocket", "polling"],
-  path: "/socket.io",
+export const io = new IOServer(server, {
+  path: '/socket.io',
+  cors: { origin: '*', methods: ['GET','POST','DELETE','PUT','PATCH','OPTIONS'], credentials: true },
+  transports: ['websocket','polling'],
   pingTimeout: 60000,
   pingInterval: 25000,
   allowEIO3: true,
@@ -63,6 +63,8 @@ app.use(
     },
   })
 );
+
+app.set('trust proxy', 1); 
 
 // ── 2) Core Middleware ──────────────────────────────────────────────────────────
 app.use(express.json());

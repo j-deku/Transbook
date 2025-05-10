@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 
 const socket = io(import.meta.env.VITE_API_BASE_URL, {
   path: '/socket.io',
+  transports: ['websocket','polling'],
   withCredentials: true,          // sends cookies/auth headers :contentReference[oaicite:11]{index=11}
-  transports: ["websocket","polling"],
 });
 
 const DriverSocketProvider = ({ children }) => {
