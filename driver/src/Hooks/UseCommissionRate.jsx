@@ -29,5 +29,6 @@ export function useCommissionRate() {
     };
   }, [url]);
 
+  
   return loading ? null : rate;
 }
