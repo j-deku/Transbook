@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { StoreContext } from "../../context/StoreContext";
 import axiosInstance from "../../../axiosInstance";
-import { useCommissionRate } from "../../hooks/useCommissionRate";
+import { UseCommissionRate } from "../../hooks/UseCommissionRate/UseCommissionRate";
 
 const currencyOptions = [
   { code: "USD", label: "US Dollar" },
@@ -50,7 +50,7 @@ const CreateRide = () => {
   const [createdRide, setCreatedRide] = useState(null);
   const [loading, setLoading] = useState(false);
 
-const commissionRate = useCommissionRate();
+const commissionRate = UseCommissionRate();
 const loadingCommission = commissionRate === null;  
 
   const handlePlaceChange = (value, field) => {

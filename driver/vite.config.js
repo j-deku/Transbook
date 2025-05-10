@@ -10,7 +10,8 @@ export default defineConfig({
       strategies: 'generateSW',         // let Workbox generate its own sw.js
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+         globIgnores: [],
       },
       manifest: {
         name: "TOLI-TOLI",

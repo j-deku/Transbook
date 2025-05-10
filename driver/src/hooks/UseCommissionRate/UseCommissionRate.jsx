@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
-import axiosInstance from '../../axiosInstance';
-import { StoreContext } from '../context/StoreContext';
+import axiosInstance from '../../../axiosInstance';
+import { StoreContext } from '../../context/StoreContext';
 
-export function useCommissionRate() {
+export function UseCommissionRate() {
   const { url } = useContext(StoreContext);
   const [rate, setRate] = useState(null);
   const [loading, setLoading] = useState(true);

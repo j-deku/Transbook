@@ -20,8 +20,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { StoreContext } from "../../context/StoreContext";
 import axiosInstance from "../../../axiosInstance";
-import { useCommissionRate } from '../../hooks/useCommissionRate';
 import "./EditRide.css";
+import { UseCommissionRate } from "../../hooks/UseCommissionRate/UseCommissionRate";
 
 const vehicleTypes = [
   { value: "bus", label: "Bus" },
@@ -49,7 +49,7 @@ const EditRide = () => {
   const { rideId } = useParams();
   const navigate = useNavigate();
   const { url } = useContext(StoreContext);
-const commissionRate = useCommissionRate();
+const commissionRate = UseCommissionRate();
 const loadingCommission = commissionRate === null;  
 const [data, setData] = useState({
     pickup: "",
