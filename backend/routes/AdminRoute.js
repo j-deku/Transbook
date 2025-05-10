@@ -7,6 +7,8 @@ import {
   getDashboardStats, 
   getMonthlyBookings, 
   getMonthlyRevenue, 
+  getCommissionRate,
+  setCommissionRate,
   resetPassword,
   getAllRides,
   getRideById,
@@ -34,6 +36,9 @@ adminRouter.post("/login", AdminLogin);
 adminRouter.post("/forgot-password", forgotPassword);
 adminRouter.post("/reset-password/:token", resetPassword);
 
+adminRouter.get("/commission", getCommissionRate);
+
+
 // Apply verifyAdmin middleware for all endpoints defined below
 adminRouter.use(verifyAdmin);
 // Protected admin dashboard route
@@ -46,6 +51,7 @@ adminRouter.get("/stats", getDashboardStats);
 adminRouter.get("/monthly-revenue", getMonthlyRevenue);
 adminRouter.get("/booking-status", getBookingStatusDistribution);
 adminRouter.get("/monthly-bookings", getMonthlyBookings);
+adminRouter.post("/commission", setCommissionRate);
 
 // Ride management endpoints
 adminRouter.get("/rides", getAllRides);

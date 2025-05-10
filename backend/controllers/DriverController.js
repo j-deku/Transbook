@@ -13,6 +13,7 @@ import { io } from "../sever.js"; // Import socket.io instance
 import {sendPushNotification} from "../utils/sendPushNotification.js"
 import Notification from "../models/NotificationModel.js";
 import geocodeAddress from "../utils/geocodeAddress.js";
+import CommissionModel from "../models/CommissionModel.js";
 
 const scheduleRideReminder = (ride) => {
   const rideTime = new Date(ride.selectedDate).getTime();
@@ -94,6 +95,9 @@ const updateRide = async (req, res) => {
       return res.status(403).json({ success: false, message: "Not authorized to edit this ride" });
     }
 
+    const cfg = await CommissionModel.findOne({ active: true }).sort({ effectiveFrom: -1 });
+    const rate = cfg?.rate ?? ride.commissionRate;
+
     // 2. If you allow updating the image:
     if (req.file) {
       ride.imageUrl = req.file.path;
@@ -117,6 +121,12 @@ const updateRide = async (req, res) => {
         ride[field] = req.body[field];
       }
     });
+
+      if (req.body.price !== undefined) {
+      ride.commissionRate   = rate;
+      ride.commissionAmount = +(ride.price * rate).toFixed(2);
+      ride.payoutAmount     = +(ride.price * (1 - rate)).toFixed(2);
+    }
 
     // 4. (Optional) Re-geocode if pickup or destination changed
     if (req.body.pickup || req.body.destination) {
@@ -401,6 +411,9 @@ const addRide = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required" });
     }
 
+       const cfg = await CommissionModel.findOne({ active: true }).sort({ effectiveFrom: -1 });
+      const rate = cfg?.rate ?? 0;
+
     // 1) Geocode addresses
     const pickupCoords = await geocodeAddress(req.body.pickup);
     const destCoords   = await geocodeAddress(req.body.destination);
@@ -428,6 +441,10 @@ const addRide = async (req, res) => {
         type: "Point",
         coordinates: [destCoords.longitude, destCoords.latitude],
       },
+      commissionRate: rate,
+      commissionAmount: +(Number(req.body.price) * rate).toFixed(2),
+      payoutAmount: +(Number(req.body.price) * (1 - rate)).toFixed(2),
+
     });
 
     // 3) Save (triggers validate → normalize → save)

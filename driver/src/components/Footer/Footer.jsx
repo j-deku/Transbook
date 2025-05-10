@@ -18,7 +18,7 @@ const Footer = () => {
         <a href="tel:+233246062758">📞 Assistance</a>
       </nav>
       <div className="footer-info">
-        <p>&copy; {new Date().getFullYear()} TransBook. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} TOLI-TOLI. All rights reserved.</p>
       </div>
     </footer>
   );

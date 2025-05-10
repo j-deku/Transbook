@@ -20,6 +20,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { StoreContext } from "../../context/StoreContext";
 import axiosInstance from "../../../axiosInstance";
+import { useCommissionRate } from '../../hooks/useCommissionRate';
 import "./EditRide.css";
 
 const vehicleTypes = [
@@ -48,7 +49,9 @@ const EditRide = () => {
   const { rideId } = useParams();
   const navigate = useNavigate();
   const { url } = useContext(StoreContext);
-  const [data, setData] = useState({
+const commissionRate = useCommissionRate();
+const loadingCommission = commissionRate === null;  
+const [data, setData] = useState({
     pickup: "",
     destination: "",
     price: "",
@@ -242,7 +245,26 @@ const EditRide = () => {
               required
             />
           </FormControl>
-
+            {/* Show updated commission & payout after edits */}
+            {loadingCommission
+              ? <CircularProgress size={24} />
+              : <>
+                  <TextField
+                    label="Platform Fee"
+                    value={(data.price * commissionRate).toFixed(2)}
+                    InputProps={{ readOnly: true }}
+                    fullWidth
+                    sx={{ mt: 2 }}
+                  />
+                  <TextField
+                    label="Your Payout"
+                    value={(data.price * (1 - commissionRate)).toFixed(2)}
+                    InputProps={{ readOnly: true }}
+                    fullWidth
+                    sx={{ mt: 1, mb: 3 }}
+                  />
+                </>
+            }
           <FormControl fullWidth>
             <InputLabel>Currency</InputLabel>
             <Select

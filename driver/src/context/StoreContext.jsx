@@ -11,7 +11,7 @@ const StoreContextProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState(""); // this is for normal searching at the navbar so don't use it
   const [user, setUser] = useState(null); // User state
   const [searchData, setSearchData] = useState(null);
-  
+
   // Check for token and fetch user data on mount
   useEffect(() => {
     const savedToken = localStorage.getItem("token");

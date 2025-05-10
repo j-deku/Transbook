@@ -1,5 +1,7 @@
 //icons image
 import list_Icon from './list.png'
+import finance from './money-management.png'
+import finance2 from './money-management (1).png'
 import assign_ride from './share-ride.png'
 import assign_ride3 from './share-ride2.png'
 import assign_ride2 from './share-ride (1).png'
@@ -45,6 +47,8 @@ import TransLogo from './transBook_logo_circular.png'
 export const assets={
     //image icons
     TransLogo,
+    finance,
+    finance2,
     assign_ride,
     assign_ride2,
     assign_ride3,

@@ -37,6 +37,11 @@ const RideSchema = new mongoose.Schema(
       default: "USD", 
       required: true 
     },
+        // in your RideSchema definition
+    commissionRate:   { type: Number, required: true },  // e.g. 0.20
+    commissionAmount: { type: Number, required: true },  // price * commissionRate
+    payoutAmount:     { type: Number, required: true },  // price – commissionAmount
+    
     description: { type: String, required: true },
     selectedDate:{ type: Date,   required: true },
     selectedTime:{ type: String, required: true },

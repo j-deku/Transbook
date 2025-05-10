@@ -10,6 +10,7 @@ import userModel from "../models/UserModel.js";
 import DriverModel from "../models/DriverModel.js"; // Dedicated Driver model
 import BookingModel from "../models/BookingModel.js";
 import geocodeAddress from "../utils/geocodeAddress.js";
+import CommissionModel from "../models/CommissionModel.js";
 import { io } from "../sever.js";
 
 dotenv.config();
@@ -429,6 +430,60 @@ const getAllBookings = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
+
+/**
+ * GET /api/admin/commission
+ * Retrieves the current active commission rate.
+ */
+export const getCommissionRate = async (req, res) => {
+  try {
+    const config = await CommissionModel
+      .findOne({ active: true })
+      .sort({ effectiveFrom: -1 });
+
+    if (!config) {
+      return res.json({ success: true, rate: 0 });
+    }
+
+    return res.json({ success: true, rate: config.rate });
+  } catch (err) {
+    console.error("Error fetching commission rate:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+/**
+ * POST /api/admin/commission
+ * Sets a new platform commission rate.
+ * Body: { rate: Number (0–1), effectiveFrom?: Date }
+ */
+export const setCommissionRate = async (req, res) => {
+  try {
+    const { rate, effectiveFrom } = req.body;
+    if (rate == null || rate < 0 || rate > 1) {
+      return res.status(400).json({ success: false, message: "Rate must be between 0 and 1" });
+    }
+
+    // Deactivate existing configs
+    await CommissionModel.updateMany(
+      { active: true },
+      { active: false }
+    );
+
+    // Create and activate new config
+    const config = await CommissionModel.create({
+      rate,
+      effectiveFrom: effectiveFrom ? new Date(effectiveFrom) : new Date(),
+      active: true,
+    });
+
+    return res.json({ success: true, config });
+  } catch (err) {
+    console.error("Error setting commission rate:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 
 // In your addRide function:
 const addRide = async (req, res) => {

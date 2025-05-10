@@ -17,6 +17,7 @@ import AddDriver from "./Pages/AddDriver/AddDriver";
 import ListDrivers from "./Pages/ListDrivers/ListDrivers";
 import UpdateRides from "./Pages/UpdateRides/UpdateRides";
 import UpdateDrivers from "./Pages/UpdateDrivers/UpdateDrivers";
+import Finance from "./Pages/Finance/Finance";
 import AdminSocketProvider from "../provider/AdminSocketProvider";
 import { useEffect } from "react";
 
@@ -65,9 +66,9 @@ const App = () => {
           <Route path="/add-driver" element={<PrivateRoute><AddDriver/></PrivateRoute>} />
           <Route path="/list-drivers" element={<PrivateRoute><ListDrivers/></PrivateRoute>} />
           <Route path="/assign-rides" element={<PrivateRoute><AssignRides/></PrivateRoute>} />
-
           <Route path="/update-ride/:id" element={<PrivateRoute><UpdateRides/></PrivateRoute>} />
           <Route path="/update-driver/:id" element={<PrivateRoute><UpdateDrivers/></PrivateRoute>} />
+          <Route path="/finance" element={<PrivateRoute><Finance/></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

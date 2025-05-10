@@ -74,7 +74,7 @@ const SearchArchive = () => {
                   <>
                     <AccessTimeIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
                     {new Date(archive.selectedDate).toLocaleDateString()}
-                    {' — '}
+                    {' — '} 
                     <LocationOnIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
                     {archive.passengers} Passenger{archive.passengers > 1 ? 's' : ''}
                   </>

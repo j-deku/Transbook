@@ -1,7 +1,6 @@
 // CreateRide.jsx
 import React, { useContext, useState } from "react";
 import "./CreateRide.css";
-import axios from "axios";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Button, Select, MenuItem, InputLabel, FormControl, TextField, Box } from "@mui/material";
@@ -18,6 +17,8 @@ import {
   Typography,
 } from "@mui/material";
 import { StoreContext } from "../../context/StoreContext";
+import axiosInstance from "../../../axiosInstance";
+import { useCommissionRate } from "../../hooks/useCommissionRate";
 
 const currencyOptions = [
   { code: "USD", label: "US Dollar" },
@@ -48,6 +49,9 @@ const CreateRide = () => {
   const [showModal, setShowModal] = useState(false);
   const [createdRide, setCreatedRide] = useState(null);
   const [loading, setLoading] = useState(false);
+
+const commissionRate = useCommissionRate();
+const loadingCommission = commissionRate === null;  
 
   const handlePlaceChange = (value, field) => {
     setData(prev => ({ ...prev, [field]: value ? value.label : "" }));
@@ -101,7 +105,7 @@ const CreateRide = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const resp = await axios.post(
+      const resp = await axiosInstance.post(
         `${url}/api/driver/add`,
         formData,
         {
@@ -172,6 +176,26 @@ const CreateRide = () => {
               min="1"
               required
             />
+           {/* Commission breakdown */}
+              {loadingCommission
+                ? <CircularProgress size={24} />
+                : <>
+                    <TextField
+                      label="Platform Fee"
+                      value={(data.price * commissionRate).toFixed(2)}
+                      InputProps={{ readOnly: true }}
+                      fullWidth
+                      sx={{ mt: 2 }}
+                    />
+                    <TextField
+                      label="Your Payout"
+                      value={(data.price * (1 - commissionRate)).toFixed(2)}
+                      InputProps={{ readOnly: true }}
+                      fullWidth
+                      sx={{ mt: 1, mb: 3 }}
+                    />
+                  </>
+              }
           </div>
           <div className="form-group">
             <FormControl fullWidth required sx={{ mt: 2 }}>
@@ -189,6 +213,12 @@ const CreateRide = () => {
                 ))}
               </Select>
             </FormControl>
+               <Typography variant="caption" color="textSecondary" sx={{ mt: 1, mb: 1, ml: 1, fontSize: 12, fontWeight: 400, lineHeight: 1.5 }}>
+               Note: The platform fee is {Math.round(commissionRate * 100)}% of the total price.
+                 </Typography>
+                <Typography variant="caption" color="textSecondary" sx={{ mt: 1, mb: 1, ml: 1, fontSize: 12, fontWeight: 400, lineHeight: 1.5}}>
+                 Your payout will be the total price minus the platform fee.
+                 </Typography>
           </div>
         </div>
 

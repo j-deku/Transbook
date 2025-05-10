@@ -133,3 +133,4 @@
 {"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
 {"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
 {"level":"info","message":"404 Not Found: GET /api/placeApi/reverseGeocode?lat=5.6295424&lng=-0.180224"}
+{"level":"info","message":"404 Not Found: GET /api/driver/profile"}
