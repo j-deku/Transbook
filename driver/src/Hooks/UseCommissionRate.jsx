@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from 'react';
 import axiosInstance from '../../axiosInstance';
 import { StoreContext } from '../context/StoreContext';
 
-
 export function useCommissionRate() {
   const { url } = useContext(StoreContext);
   const [rate, setRate] = useState(null);
@@ -30,6 +29,5 @@ export function useCommissionRate() {
     };
   }, [url]);
 
-  // while loading, return null to let consumers show a spinner or placeholder
   return loading ? null : rate;
 }
