@@ -11,10 +11,18 @@ const stripAccents = (s = "") =>
 export const searchRides = async (req, res) => {
   try {
     const {
-      pickup, destination, selectedDate,
-      passengers, sort, filter,
-      page = 1, limit = 10,
-      pickupLat, pickupLng, destLat, destLng,
+      pickup,
+      destination,
+      selectedDate,
+      passengers,
+      sort,
+      filter,
+      page = 1,
+      limit = 10,
+      pickupLat,
+      pickupLng,
+      destLat,
+      destLng,
     } = req.query;
 
     const query = {};
@@ -55,12 +63,31 @@ export const searchRides = async (req, res) => {
       };
     }
 
-    // Date filter (00:00–23:59 UTC)
+    // Date filtering
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const currentTime = now.toTimeString().slice(0, 5); // "HH:mm"
+
     if (selectedDate) {
+      // filter to exact day
       const d = new Date(selectedDate);
       const start = new Date(d.setHours(0, 0, 0, 0));
-      const end   = new Date(d.setHours(23, 59, 59, 999));
+      const end = new Date(d.setHours(23, 59, 59, 999));
       query.selectedDate = { $gte: start, $lte: end };
+
+      // if user is searching for today, only future times
+      const todayString = startOfToday.toISOString().split("T")[0];
+      const selString = start.toISOString().split("T")[0];
+      if (selString === todayString) {
+        query.selectedTime = { $gte: currentTime };
+      }
+    } else {
+      // no date filter: only future rides (today + future days)
+      query.$or = [
+        { selectedDate: { $gt: endOfToday } },
+        { selectedDate: { $gte: startOfToday, $lte: endOfToday }, selectedTime: { $gte: currentTime } },
+      ];
     }
 
     // Minimum passengers
@@ -75,7 +102,7 @@ export const searchRides = async (req, res) => {
 
     // Sorting
     const sortCriteria = {};
-    if (sort === "earliest")      sortCriteria.selectedDate = 1;
+    if (sort === "earliest") sortCriteria.selectedDate = 1;
     else if (sort === "lowestPrice") sortCriteria.price = 1;
     else if (sort === "shortestRide") sortCriteria.distance = 1;
 
@@ -83,7 +110,7 @@ export const searchRides = async (req, res) => {
     const totalCount = await RideModel.countDocuments(query);
     const totalPages = Math.ceil(totalCount / Number(limit));
 
-    // Execute query with collation (though normalized fields make accents moot)
+    // Execute query
     const rides = await RideModel.find(query)
       .populate("driver", "name imageUrl")
       .sort(sortCriteria)
@@ -103,8 +130,10 @@ export const getRideCounts = async (req, res) => {
     const { pickup, destination, selectedDate, passengers } = req.query;
     const match = {};
 
-    if (pickup)      match.pickupNorm      = { $regex: stripAccents(pickup),      $options: "i" };
-    if (destination) match.destinationNorm = { $regex: stripAccents(destination), $options: "i" };
+    if (pickup)
+      match.pickupNorm = { $regex: stripAccents(pickup), $options: "i" };
+    if (destination)
+      match.destinationNorm = { $regex: stripAccents(destination), $options: "i" };
     if (selectedDate) {
       const d = new Date(selectedDate);
       match.selectedDate = {
