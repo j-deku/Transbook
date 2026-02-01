@@ -4,7 +4,7 @@
 
 ---
 
-## 🔗 Live Demo
+## 🔗 Live Demo (Currently offline)
 
 [Visit the Live App](https://transbook.com)  
 (Admin: [admin.transbook.com](https://admin.transbook.com))
@@ -73,7 +73,7 @@
 ---
 
 ## 📁 Project Structure
-
+```bash
 TransBook/
 ├── client/ # React frontend
 │ ├── components/
@@ -85,15 +85,19 @@ TransBook/
 │ ├── models/
 │ └── ...
 └── README.md
-
+```
 
 # Run backend
+```bash
 cd server
 npm run dev
+```
 
 # Run frontend
+```bash
 cd ../client
 npm run dev
+```
 
 ✍️ Author
 Jeremiah Deku
@@ -107,6 +111,6 @@ Paystack for payment integration
 
 OpenAI for chatbot implementation
 
-reCAPTCHA by Google
+reCAPTCHA by Google + Custom captcha
 
 Vite + React for an ultra-fast frontend experience
