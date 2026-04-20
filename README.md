@@ -16,11 +16,11 @@ Unlike traditional monolithic frontends, Transbook is structured as **three inde
 ```
 Transbook/
 |-- apps/
-|   |-- passenger/           # React app for passengers
+|   |-- fy/           # React app for passengers
 |   |-- driver/              # React app for drivers
 |   `-- admin/               # React app for admins
 |
-|-- server/                  # Shared Node.js + Express backend
+|-- backend/                  # Shared Node.js + Express backend
 |   |-- src/
 |   |   |-- routes/          # API route definitions
 |   |   |-- controllers/     # Business logic
@@ -144,10 +144,10 @@ ADMIN_URL=http://localhost:5175
 
 ```bash
 # Backend
-cd server && npm install
+cd backend && npm install
 
 # Passenger app
-cd ../apps/passenger && npm install
+cd ../fy && npm install
 
 # Driver app
 cd ../driver && npm install
@@ -159,10 +159,10 @@ cd ../admin && npm install
 ### 4. Run the development servers
 
 ```bash
-# Start backend (from /server)
+# Start backend (from /backend)
 npm run dev
 
-# Start passenger app (from /apps/passenger)
+# Start passenger app (from /apps/fy)
 npm run dev
 
 # Start driver app (from /apps/driver)
